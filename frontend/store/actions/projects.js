@@ -1,32 +1,31 @@
-import Project from "../../models/project";
+import Project from '../../models/project';
 
-export const CREATE_PROJECT = " CREATE_PROJECT";
-export const UPDATE_PROJECT = "UPDATE_PROJECT";
-export const FINISH_PROJECT = "FINISH_PROJECT";
-export const SET_PROJECTS = "SET_PROJECTS";
-export const SET_HISTORYPROJECTS = "SET_HISTORYPROJECTS";
-export const DELETE_HISTORYPROJECTS = "DELETE_HISTORYPROJECTS";
+export const CREATE_PROJECT = ' CREATE_PROJECT';
+export const UPDATE_PROJECT = 'UPDATE_PROJECT';
+export const FINISH_PROJECT = 'FINISH_PROJECT';
+export const SET_PROJECTS = 'SET_PROJECTS';
+export const SET_HISTORYPROJECTS = 'SET_HISTORYPROJECTS';
+export const DELETE_HISTORYPROJECTS = 'DELETE_HISTORYPROJECTS';
 
 export const fetchProjects = () => {
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
     try {
-      const response = await fetch(
-        "https://costtracking-app.firebaseio.com/projects.json"
-      );
+      const response = await fetch('http://10.0.2.2:5000/api/projects');
 
       if (!response.ok) {
-        throw new Error("Something went wrong!");
+        throw new Error('Something went wrong!');
       }
 
       const resData = await response.json();
+
       const loadedProjects = [];
 
       for (const key in resData) {
         loadedProjects.push(
           new Project(
             key,
-            "c2",
+            'c2',
             resData[key].supervisorId,
             resData[key].title,
             resData[key].address,
@@ -52,23 +51,21 @@ export const fetchProjects = () => {
 export const fetchHistoryProjects = () => {
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
-    const response = await fetch(
-      "https://costtracking-app.firebaseio.com/historyProjects.json"
-    );
+    const response = await fetch('http://10.0.2.2:5000/api/historyprojects');
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      throw new Error('Something went wrong!');
     }
 
     const resData = await response.json();
-
+    console.log(resData);
     const loadedHistoryProjects = [];
 
     for (const key in resData) {
       loadedHistoryProjects.push(
         new Project(
           resData[key].finishedProject.id,
-          "c2",
+          'c2',
           resData[key].finishedProject.supervisorId,
           resData[key].finishedProject.projectTitle,
           resData[key].finishedProject.projectAddress,
@@ -102,9 +99,9 @@ export const createProject = (
     const response = await fetch(
       `https://costtracking-app.firebaseio.com/projects.json?auth=${token}`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title,
@@ -147,9 +144,9 @@ export const updateProject = (
     const response = await fetch(
       `https://costtracking-app.firebaseio.com/projects/${id}.json?auth=${token}`,
       {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title,
@@ -162,7 +159,7 @@ export const updateProject = (
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      throw new Error('Something went wrong!');
     }
 
     dispatch({
@@ -185,9 +182,9 @@ export const finishProject = (finishedProject) => {
     const response1 = await fetch(
       `https://costtracking-app.firebaseio.com/historyProjects.json?auth=${token}`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           finishedProject,
@@ -196,7 +193,7 @@ export const finishProject = (finishedProject) => {
     );
 
     if (!response1.ok) {
-      throw new Error("Something went wrong");
+      throw new Error('Something went wrong');
     }
 
     const resData = await response1.json();
@@ -204,12 +201,12 @@ export const finishProject = (finishedProject) => {
     const response2 = await fetch(
       `https://costtracking-app.firebaseio.com/projects/${finishedProject.id}.json?auth=${token}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
       }
     );
 
     if (!response2.ok) {
-      throw new Error("Something went wrong");
+      throw new Error('Something went wrong');
     }
 
     dispatch({ type: FINISH_PROJECT, finishedProject });
@@ -220,11 +217,11 @@ export const deleteHistoryProject = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
     const response1 = await fetch(
-      "https://costtracking-app.firebaseio.com/historyProjects/.json"
+      'https://costtracking-app.firebaseio.com/historyProjects/.json'
     );
 
     if (!response1.ok) {
-      throw new Error("Something went wrong");
+      throw new Error('Something went wrong');
     }
 
     const resData = await response1.json();
@@ -238,12 +235,12 @@ export const deleteHistoryProject = (id) => {
     const response2 = await fetch(
       `https://costtracking-app.firebaseio.com/historyProjects/${historyKey}.json?auth=${token}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
       }
     );
 
     if (!response2.ok) {
-      throw new Error("Something went wrong");
+      throw new Error('Something went wrong');
     }
 
     dispatch({ type: DELETE_HISTORYPROJECTS, id });
