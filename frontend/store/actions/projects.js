@@ -10,11 +10,13 @@ export const DELETE_HISTORYPROJECTS = 'DELETE_HISTORYPROJECTS';
 export const fetchProjects = () => {
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
+    const token = getState().auth.token;
     try {
       const response = await fetch('http://10.0.2.2:5000/api/projects');
 
       if (!response.ok) {
-        throw new Error('Something went wrong!');
+        const errorResData = await response.json();
+        throw new Error(errorResData.message);
       }
 
       const resData = await response.json();
@@ -24,9 +26,9 @@ export const fetchProjects = () => {
       for (const key in resData) {
         loadedProjects.push(
           new Project(
-            key,
+            resData[key]._id,
             'c2',
-            resData[key].supervisorId,
+            resData[key].supervisor,
             resData[key].title,
             resData[key].address,
             resData[key].startedDate,
@@ -35,6 +37,7 @@ export const fetchProjects = () => {
           )
         );
       }
+
       dispatch({
         type: SET_PROJECTS,
         projects: loadedProjects,
@@ -58,7 +61,6 @@ export const fetchHistoryProjects = () => {
     }
 
     const resData = await response.json();
-    console.log(resData);
     const loadedHistoryProjects = [];
 
     for (const key in resData) {

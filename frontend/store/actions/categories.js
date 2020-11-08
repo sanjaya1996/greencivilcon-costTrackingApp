@@ -1,19 +1,18 @@
-import Category from "../../models/category";
+import Category from '../../models/category';
 
-export const CREATE_PROJECTPHASE = "CREATE_PROJECTPHASE";
-export const UPDATE_PROJECTPHASE = "UPDATE_PROJECTPHASE";
-export const SET_PROJECTPHASES = "SET_PROJECTPHASES";
-export const DELETE_PHASES_ONDLTPROJECT = "DELETE_PHASES_ONDLTPROJECT";
+export const CREATE_PROJECTPHASE = 'CREATE_PROJECTPHASE';
+export const UPDATE_PROJECTPHASE = 'UPDATE_PROJECTPHASE';
+export const SET_PROJECTPHASES = 'SET_PROJECTPHASES';
+export const DELETE_PHASES_ONDLTPROJECT = 'DELETE_PHASES_ONDLTPROJECT';
 
 export const fetchProjectPhases = () => {
   return async (dispatch) => {
     try {
-      const response = await fetch(
-        "https://costtracking-app.firebaseio.com/projectPhases.json"
-      );
+      const response = await fetch('http://10.0.2.2:5000/api/projectphases');
 
       if (!response.ok) {
-        throw new Error("Something went wrong!");
+        const errorResData = await response.json();
+        throw new Error(errorResData.message);
       }
       const resData = await response.json();
       const loadedProjectPhases = [];
@@ -21,8 +20,8 @@ export const fetchProjectPhases = () => {
       for (const key in resData) {
         loadedProjectPhases.push(
           new Category(
-            key,
-            resData[key].projectId,
+            resData[key]._id,
+            resData[key].project,
             resData[key].title,
             resData[key].startedDate,
             resData[key].estimatedDate,
@@ -47,25 +46,24 @@ export const createProjectPhase = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/projectPhases.json?auth=${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          projectId,
-          title,
-          startedDate,
-          estimatedDate,
-          estimatedBudget,
-        }),
-      }
-    );
+    const response = await fetch('http://10.0.2.2:5000/api/projectphases', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        projectId,
+        title,
+        startedDate,
+        estimatedDate,
+        estimatedBudget,
+      }),
+    });
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     const resData = await response.json();
@@ -73,12 +71,12 @@ export const createProjectPhase = (
     dispatch({
       type: CREATE_PROJECTPHASE,
       projectPhaseData: {
-        id: resData.name,
-        projectId,
-        title,
-        startedDate,
-        estimatedDate,
-        estimatedBudget,
+        id: resData._id,
+        projectId: resData.project,
+        title: resData.title,
+        startedDate: resData.startedDate,
+        estimatedDate: resData.estimatedDate,
+        estimatedBudget: resData.estimatedBudget,
       },
     });
   };
@@ -95,9 +93,9 @@ export const updateProjectPhase = (
     const response = await fetch(
       `https://costtracking-app.firebaseio.com/projectPhases/${phaseId}.json?auth=${token}`,
       {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           startedDate,
@@ -108,7 +106,7 @@ export const updateProjectPhase = (
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      throw new Error('Something went wrong!');
     }
 
     dispatch({
@@ -126,12 +124,12 @@ export const deletePhasesOnDltProject = (phaseIds) => {
       const response = await fetch(
         `https://costtracking-app.firebaseio.com/projectPhases/${id}.json?auth=${token}`,
         {
-          method: "DELETE",
+          method: 'DELETE',
         }
       );
 
       if (!response.ok) {
-        throw new Error("Something went wrong!");
+        throw new Error('Something went wrong!');
       }
     });
   };

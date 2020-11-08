@@ -1,21 +1,22 @@
-import React from "react";
-import { View, Dimensions, Text, StyleSheet } from "react-native";
-import { Svg, Circle, Text as SVGText, TSpan } from "react-native-svg";
+import React from 'react';
+import { View, Dimensions, Text, StyleSheet } from 'react-native';
+import { Svg, Circle, Text as SVGText, TSpan } from 'react-native-svg';
+import moment from 'moment';
 
-import Colors from "../constant/Colors";
+import Colors from '../constant/Colors';
 
 const GraphContainer = (props) => {
   //Circular Progress Bar Variable
-  const { width } = Dimensions.get("window");
+  const { width } = Dimensions.get('window');
   const size = width - 287;
   const strokeWidth = width / 35;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const textColor = props.textColor;
 
-  let rightSideTitle = "Estimated Date :";
+  let rightSideTitle = 'Estimated Date :';
   if (!props.editable) {
-    rightSideTitle = "Project Review :";
+    rightSideTitle = 'Project Review :';
   }
 
   // Progress Value Calculation
@@ -32,10 +33,10 @@ const GraphContainer = (props) => {
 
   return (
     <View style={{ padding: 10 }}>
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: 'row' }}>
         <View style={{ margin: 5 }}>
           <Text style={{ ...styles.label, color: textColor, fontSize: 15 }}>
-            Budget Spent:{" "}
+            Budget Spent:{' '}
           </Text>
         </View>
         <View style={{ margin: 5 }}>
@@ -55,14 +56,14 @@ const GraphContainer = (props) => {
         <View
           style={{
             paddingRight: 20,
-            alignItems: "center",
+            alignItems: 'center',
           }}
         >
           <View>
             <Svg width={size} height={size}>
               <Circle
-                stroke="white"
-                fill="none"
+                stroke='white'
+                fill='none'
                 cx={size / 2}
                 cy={size / 2}
                 r={radius}
@@ -70,17 +71,17 @@ const GraphContainer = (props) => {
               />
               <Circle
                 stroke={Colors.buttonColor}
-                fill="none"
+                fill='none'
                 cx={size / 2}
                 cy={size / 2}
                 r={radius}
                 strokeDasharray={`${circumference} ${circumference}`}
                 strokeDashoffset={radius * Math.PI * 2 * (svgProgress / 100)}
-                strokeLinecap="round"
+                strokeLinecap='round'
                 transform={`rotate(-90, ${size / 2}, ${size / 2})`}
                 {...{ strokeWidth }}
               />
-              <SVGText fontSize="15" textAnchor="middle" fill={textColor}>
+              <SVGText fontSize='15' textAnchor='middle' fill={textColor}>
                 <TSpan x={size / 2} y={size / 2 + 5}>
                   {`${progressValue}%`}
                 </TSpan>
@@ -90,14 +91,14 @@ const GraphContainer = (props) => {
           <View
             style={{
               margin: 10,
-              alignItems: "center",
+              alignItems: 'center',
             }}
           >
             <Text
               style={[
                 props.projectPhase
                   ? { ...styles.value, fontSize: 20 }
-                  : { color: textColor, fontFamily: "open-sans", fontSize: 20 },
+                  : { color: textColor, fontFamily: 'open-sans', fontSize: 20 },
               ]}
             >
               $ {budgetSpent.toFixed(2)}
@@ -108,14 +109,14 @@ const GraphContainer = (props) => {
         <View style={styles.daysLeft}>
           {props.editable ? (
             <View>
-              <Text style={{ color: textColor, fontWeight: "bold" }}>
+              <Text style={{ color: textColor, fontWeight: 'bold' }}>
                 {props.projectPhase ? (
                   <Text style={{ ...styles.value, fontSize: radius * 1.5 }}>
                     {diffDays}
                   </Text>
                 ) : (
                   <Text
-                    style={{ fontSize: radius * 1.7, fontFamily: "open-sans" }}
+                    style={{ fontSize: radius * 1.7, fontFamily: 'open-sans' }}
                   >
                     {diffDays}
                   </Text>
@@ -126,9 +127,9 @@ const GraphContainer = (props) => {
             </View>
           ) : (
             <View>
-              <View style={{ flexDirection: "row", marginBottom: 10 }}>
+              <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text
-                  style={{ color: textColor, fontFamily: "open-sans-bold" }}
+                  style={{ color: textColor, fontFamily: 'open-sans-bold' }}
                 >
                   Estimated $:
                 </Text>
@@ -136,16 +137,16 @@ const GraphContainer = (props) => {
                   style={[
                     props.projectPhase
                       ? styles.value
-                      : { color: textColor, fontFamily: "open-sans" },
+                      : { color: textColor, fontFamily: 'open-sans' },
                   ]}
                 >
-                  {"  "}
+                  {'  '}
                   {props.estimatedBudget}
                 </Text>
               </View>
-              <View style={{ flexDirection: "row", marginBottom: 10 }}>
+              <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text
-                  style={{ color: textColor, fontFamily: "open-sans-bold" }}
+                  style={{ color: textColor, fontFamily: 'open-sans-bold' }}
                 >
                   Completed:
                 </Text>
@@ -153,44 +154,44 @@ const GraphContainer = (props) => {
                   style={[
                     props.projectPhase
                       ? styles.value
-                      : { color: textColor, fontFamily: "open-sans" },
+                      : { color: textColor, fontFamily: 'open-sans' },
                   ]}
                 >
-                  {"  "}
+                  {'  '}
                   {props.startedDate}
                 </Text>
               </View>
             </View>
           )}
 
-          <View style={{ flexDirection: "row" }}>
-            <Text style={{ color: textColor, fontFamily: "open-sans-bold" }}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ color: textColor, fontFamily: 'open-sans-bold' }}>
               Started:
             </Text>
             <Text
               style={[
                 props.projectPhase
                   ? styles.value
-                  : { color: textColor, fontFamily: "open-sans" },
+                  : { color: textColor, fontFamily: 'open-sans' },
               ]}
             >
-              {"  "}
-              {props.startedDate}
+              {'  '}
+              {moment(props.startedDate).format('DD MMM YYYY')}
             </Text>
           </View>
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
-            <Text style={{ color: textColor, fontFamily: "open-sans-bold" }}>
+          <View style={{ flexDirection: 'row', marginTop: 10 }}>
+            <Text style={{ color: textColor, fontFamily: 'open-sans-bold' }}>
               Estimated:
             </Text>
             <Text
               style={[
                 props.projectPhase
                   ? styles.value
-                  : { color: textColor, fontFamily: "open-sans" },
+                  : { color: textColor, fontFamily: 'open-sans' },
               ]}
             >
-              {"  "}
-              {props.estimatedDate}
+              {'  '}
+              {moment(props.estimatedDate).format('DD MMM YYYY')}
             </Text>
           </View>
         </View>
@@ -217,10 +218,10 @@ const GraphContainer = (props) => {
 
 const styles = StyleSheet.create({
   graphContainer: {
-    alignItems: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    flexDirection: 'row',
     paddingRight: 10,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
 
   costDetails: {
@@ -228,15 +229,15 @@ const styles = StyleSheet.create({
   },
   costDetailsText: {
     paddingVertical: 5,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   label: {
-    fontFamily: "open-sans-bold",
-    color: "white",
+    fontFamily: 'open-sans-bold',
+    color: 'white',
   },
   value: {
-    fontFamily: "open-sans",
-    color: "white",
+    fontFamily: 'open-sans',
+    color: 'white',
   },
 });
 

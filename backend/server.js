@@ -2,8 +2,12 @@ import express from 'express';
 import dotenv from 'dotenv';
 import colors from 'colors';
 
-import { PROJECTS, HISTORY_PROJECTS } from './data/dummy-data.js';
 import connectDB from './config/db.js';
+import { notFound, erroHandler } from './middleware/errorMiddleware.js';
+import userRoutes from './routes/userRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
+import historyProjectRoutes from './routes/historyProjectRoutes.js';
+import projectPhaseRoutes from './routes/projectPhaseRoutes.js';
 
 dotenv.config();
 
@@ -11,17 +15,24 @@ connectDB();
 
 const app = express();
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-app.get('/api/projects', (req, res) => {
-  res.json(PROJECTS);
-});
+app.use('/api/users', userRoutes);
 
-app.get('/api/historyprojects', (req, res) => {
-  res.json(HISTORY_PROJECTS);
-});
+app.use('/api/projects', projectRoutes);
+
+app.use('/api/historyprojects', historyProjectRoutes);
+
+app.use('/api/projectphases', projectPhaseRoutes);
+
+app.use(notFound);
+
+app.use(erroHandler);
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
