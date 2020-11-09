@@ -3,7 +3,6 @@ import Category from '../../models/category';
 export const CREATE_PROJECTPHASE = 'CREATE_PROJECTPHASE';
 export const UPDATE_PROJECTPHASE = 'UPDATE_PROJECTPHASE';
 export const SET_PROJECTPHASES = 'SET_PROJECTPHASES';
-export const DELETE_PHASES_ONDLTPROJECT = 'DELETE_PHASES_ONDLTPROJECT';
 
 export const fetchProjectPhases = () => {
   return async (dispatch) => {
@@ -91,11 +90,12 @@ export const updateProjectPhase = (
   return async (dispatch, getState) => {
     const token = getState().auth.token;
     const response = await fetch(
-      `https://costtracking-app.firebaseio.com/projectPhases/${phaseId}.json?auth=${token}`,
+      `http://10.0.2.2:5000/api/projectphases/${phaseId}`,
       {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           startedDate,
@@ -105,32 +105,21 @@ export const updateProjectPhase = (
       }
     );
 
+    const resData = await response.json();
+
     if (!response.ok) {
-      throw new Error('Something went wrong!');
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     dispatch({
       type: UPDATE_PROJECTPHASE,
       phaseId,
-      projectPhaseData: { startedDate, estimatedDate, estimatedBudget },
-    });
-  };
-};
-
-export const deletePhasesOnDltProject = (phaseIds) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    phaseIds.forEach(async (id) => {
-      const response = await fetch(
-        `https://costtracking-app.firebaseio.com/projectPhases/${id}.json?auth=${token}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Something went wrong!');
-      }
+      projectPhaseData: {
+        startedDate: resData.startedDate,
+        estimatedDate: resData.estimatedDate,
+        estimatedBudget: resData.estimatedBudget,
+      },
     });
   };
 };
