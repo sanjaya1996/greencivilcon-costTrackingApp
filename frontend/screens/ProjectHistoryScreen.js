@@ -163,7 +163,7 @@ const ProjectHistoryScreen = (props) => {
   return (
     <View style={styles.screen}>
       <FlatList
-        keyExtractor={(item) => item.finishedProject.id}
+        keyExtractor={(item) => item._id}
         data={userHistoryProjects}
         renderItem={(itemData) => {
           const project = itemData.item.finishedProject;

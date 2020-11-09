@@ -176,7 +176,7 @@ const GraphContainer = (props) => {
               ]}
             >
               {' '}
-              {moment(props.startedDate).format('DD MMM YYYY')}
+              {moment(new Date(props.startedDate)).format('DD MMM YYYY')}
             </Text>
           </View>
           <View style={{ flexDirection: 'row', marginTop: 10 }}>
@@ -191,7 +191,7 @@ const GraphContainer = (props) => {
               ]}
             >
               {'  '}
-              {moment(props.estimatedDate).format('DD MMM YYYY')}
+              {moment(new Date(props.estimatedDate)).format('DD MMM YYYY')}
             </Text>
           </View>
         </View>

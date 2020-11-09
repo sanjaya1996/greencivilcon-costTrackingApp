@@ -184,7 +184,6 @@ export const finishProject = (id) => {
 };
 
 export const deleteHistoryProject = (id) => {
-  console.log(id);
   return async (dispatch, getState) => {
     const token = getState().auth.token;
 

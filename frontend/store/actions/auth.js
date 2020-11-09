@@ -1,4 +1,4 @@
-import { AsyncStorage, LogBox } from 'react-native';
+import { AsyncStorage } from 'react-native';
 
 // export const SIGNUP = "SIGNUP";
 // export const LOGIN = "LOGIN";
@@ -16,20 +16,16 @@ export const authenticate = (userId, token, expirytime) => {
 
 export const signup = (email, password) => {
   return async (dispatch) => {
-    const response = await fetch(
-      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyB_XPKQV1rOZLEhzFmeLKW56YDRfCxysV8',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          returnSecureToken: true,
-        }),
-      }
-    );
+    const response = await fetch('http://10.0.2.2:5000/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();
@@ -37,17 +33,18 @@ export const signup = (email, password) => {
     }
 
     const resData = await response.json();
+
     dispatch(
       authenticate(
-        resData.localId,
-        resData.idToken,
+        resData.id,
+        resData.token,
         parseInt(resData.expiresIn) * 1000
       )
     );
     const expirationDate = new Date(
       new Date().getTime() + parseInt(resData.expiresIn) * 1000
     );
-    saveDataToStorage(resData.idToken, resData.localId, expirationDate);
+    saveDataToStorage(resData.token, resData.id, expirationDate);
   };
 };
 
