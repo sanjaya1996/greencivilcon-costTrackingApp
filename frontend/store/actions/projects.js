@@ -10,7 +10,6 @@ export const DELETE_HISTORYPROJECTS = 'DELETE_HISTORYPROJECTS';
 export const fetchProjects = () => {
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
-    const token = getState().auth.token;
     try {
       const response = await fetch('http://10.0.2.2:5000/api/projects');
 
@@ -53,37 +52,27 @@ export const fetchProjects = () => {
 
 export const fetchHistoryProjects = () => {
   return async (dispatch, getState) => {
-    const userId = getState().auth.userId;
-    const response = await fetch('http://10.0.2.2:5000/api/historyprojects');
+    const token = getState().auth.token;
+    const response = await fetch(
+      'http://10.0.2.2:5000/api/projects/history/my',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Something went wrong!');
+      const errorResData = await response.json();
+
+      throw new Error(errorResData.message);
     }
 
     const resData = await response.json();
-    const loadedHistoryProjects = [];
-
-    for (const key in resData) {
-      loadedHistoryProjects.push(
-        new Project(
-          resData[key].finishedProject.id,
-          'c2',
-          resData[key].finishedProject.supervisorId,
-          resData[key].finishedProject.projectTitle,
-          resData[key].finishedProject.projectAddress,
-          resData[key].finishedProject.startDate,
-          resData[key].finishedProject.estimatedDate,
-          resData[key].finishedProject.estimatedBudget
-        )
-      );
-    }
 
     dispatch({
       type: SET_HISTORYPROJECTS,
-      historyProjects: loadedHistoryProjects,
-      userHistoryProjects: loadedHistoryProjects.filter(
-        (project) => project.supervisorId === userId
-      ),
+      userHistoryProjects: resData,
     });
   };
 };
@@ -97,37 +86,33 @@ export const createProject = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const userId = getState().auth.userId;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/projects.json?auth=${token}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title,
-          address,
-          startedDate,
-          estimatedDate,
-          estimatedBudget,
-          supervisorId: userId,
-        }),
-      }
-    );
+    const response = await fetch('http://10.0.2.2:5000/api/projects', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title,
+        address,
+        startedDate,
+        estimatedDate,
+        estimatedBudget,
+      }),
+    });
 
     const resData = await response.json();
 
     dispatch({
       type: CREATE_PROJECT,
       projectData: {
-        id: resData.name,
+        id: resData._id,
         title,
         address,
         startedDate,
         estimatedDate,
         estimatedBudget,
-        supervisorId: userId,
+        supervisorId: resData.supervisor,
       },
     });
   };
@@ -143,25 +128,24 @@ export const updateProject = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/projects/${id}.json?auth=${token}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title,
-          address,
-          startedDate,
-          estimatedDate,
-          estimatedBudget,
-        }),
-      }
-    );
+    const response = await fetch(`http://10.0.2.2:5000/api/projects/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title,
+        address,
+        startedDate,
+        estimatedDate,
+        estimatedBudget,
+      }),
+    });
 
     if (!response.ok) {
-      throw new Error('Something went wrong!');
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     dispatch({
@@ -178,71 +162,46 @@ export const updateProject = (
   };
 };
 
-export const finishProject = (finishedProject) => {
+export const finishProject = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response1 = await fetch(
-      `https://costtracking-app.firebaseio.com/historyProjects.json?auth=${token}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          finishedProject,
-        }),
-      }
-    );
+    const response1 = await fetch(`http://10.0.2.2:5000/api/projects/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response1.ok) {
       throw new Error('Something went wrong');
     }
 
-    const resData = await response1.json();
+    const { data } = await response1.json();
 
-    const response2 = await fetch(
-      `https://costtracking-app.firebaseio.com/projects/${finishedProject.id}.json?auth=${token}`,
-      {
-        method: 'DELETE',
-      }
-    );
-
-    if (!response2.ok) {
-      throw new Error('Something went wrong');
-    }
-
-    dispatch({ type: FINISH_PROJECT, finishedProject });
+    dispatch({ type: FINISH_PROJECT, finishedProject: data });
   };
 };
 
 export const deleteHistoryProject = (id) => {
+  console.log(id);
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response1 = await fetch(
-      'https://costtracking-app.firebaseio.com/historyProjects/.json'
-    );
 
-    if (!response1.ok) {
-      throw new Error('Something went wrong');
-    }
-
-    const resData = await response1.json();
-    let historyKey;
-    for (const key in resData) {
-      if (resData[key].finishedProject.id === id) {
-        historyKey = key;
-        break;
-      }
-    }
-    const response2 = await fetch(
-      `https://costtracking-app.firebaseio.com/historyProjects/${historyKey}.json?auth=${token}`,
+    const response = await fetch(
+      `http://10.0.2.2:5000/api/projects/history/${id}`,
       {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
-    if (!response2.ok) {
-      throw new Error('Something went wrong');
+    if (!response.ok) {
+      const errorResData = await response.json();
+      console.log(errorResData);
+      throw new Error(errorResData.message);
     }
 
     dispatch({ type: DELETE_HISTORYPROJECTS, id });

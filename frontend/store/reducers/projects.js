@@ -1,4 +1,4 @@
-import { PROJECTS } from "../../data/dummy-data";
+import { PROJECTS } from '../../data/dummy-data';
 import {
   UPDATE_PROJECT,
   CREATE_PROJECT,
@@ -6,8 +6,8 @@ import {
   SET_PROJECTS,
   SET_HISTORYPROJECTS,
   DELETE_HISTORYPROJECTS,
-} from "../actions/projects";
-import Project from "../../models/project";
+} from '../actions/projects';
+import Project from '../../models/project';
 
 const initialState = {
   projects: [],
@@ -27,13 +27,12 @@ const projectsReducer = (state = initialState, action) => {
     case SET_HISTORYPROJECTS:
       return {
         ...state,
-        historyProjects: action.historyProjects,
         userHistoryProjects: action.userHistoryProjects,
       };
     case CREATE_PROJECT:
       const newProject = new Project(
         action.projectData.id,
-        "c2",
+        'c2',
         action.projectData.supervisorId,
         action.projectData.title,
         action.projectData.address,
@@ -53,7 +52,7 @@ const projectsReducer = (state = initialState, action) => {
       );
       const updatedUserProject = new Project(
         action.id,
-        "c2",
+        'c2',
         state.projects[projectIndex].supervisorId,
         action.projectData.title,
         action.projectData.address,
@@ -69,23 +68,19 @@ const projectsReducer = (state = initialState, action) => {
         userProject: updatedUserProject,
       };
     case FINISH_PROJECT:
-      const finishedProject = state.userProject;
+      const historyProject = action.finishedProject;
       return {
         projects: state.projects.filter(
-          (project) => project.id != finishedProject.id
+          (project) => project.id != historyProject.finishedProject.id
         ),
         userProject: [],
-        historyProjects: state.historyProjects.concat(finishedProject),
-        userHistoryProjects: state.userHistoryProjects.concat(finishedProject),
+        userHistoryProjects: state.userHistoryProjects.concat(historyProject),
       };
     case DELETE_HISTORYPROJECTS:
       return {
         ...state,
-        historyProjects: state.historyProjects.filter(
-          (project) => project.id != action.id
-        ),
         userHistoryProjects: state.userHistoryProjects.filter(
-          (project) => project.id != action.id
+          (project) => project._id != action.id
         ),
       };
     default:

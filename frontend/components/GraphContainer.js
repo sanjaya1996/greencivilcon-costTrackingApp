@@ -175,7 +175,7 @@ const GraphContainer = (props) => {
                   : { color: textColor, fontFamily: 'open-sans' },
               ]}
             >
-              {'  '}
+              {' '}
               {moment(props.startedDate).format('DD MMM YYYY')}
             </Text>
           </View>

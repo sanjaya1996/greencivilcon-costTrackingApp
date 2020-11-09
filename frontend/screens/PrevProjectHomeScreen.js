@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,29 +6,27 @@ import {
   Text,
   Button,
   ImageBackground,
-  Platform,
-  Alert,
-} from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+} from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 
-import GraphContainer from "../components/GraphContainer";
-import ProjectNameContainer from "../components/ProjectNameContainer";
-import PhaseAndPeople from "../components/PhaseAndPeople";
-import LoadingSpinner from "../components/LoadingSpinner";
-import * as projectsActions from "../store/actions/projects";
-import * as projectPhasesActions from "../store/actions/categories";
-import * as materialsActions from "../store/actions/materials";
-import * as laborsActions from "../store/actions/labors";
-import * as miscellanyActions from "../store/actions/miscellanies";
+import GraphContainer from '../components/GraphContainer';
+import ProjectNameContainer from '../components/ProjectNameContainer';
+import PhaseAndPeople from '../components/PhaseAndPeople';
+import LoadingSpinner from '../components/LoadingSpinner';
+import * as projectsActions from '../store/actions/projects';
+import * as projectPhasesActions from '../store/actions/categories';
+import * as materialsActions from '../store/actions/materials';
+import * as laborsActions from '../store/actions/labors';
+import * as miscellanyActions from '../store/actions/miscellanies';
 
 //Background Image
 const image = {
   uri:
-    "https://www.levelset.com/wp-content/uploads/2019/03/bigstock-Construction-Site-5042942.jpg",
+    'https://www.levelset.com/wp-content/uploads/2019/03/bigstock-Construction-Site-5042942.jpg',
 };
 
 const PrevProjectHomeScreen = (props) => {
-  const passedProjectId = props.navigation.getParam("projectId");
+  const passedProjectId = props.navigation.getParam('projectId');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
 
@@ -54,9 +52,10 @@ const PrevProjectHomeScreen = (props) => {
     loadProjectAndPhases();
   }, [dispatch, loadProjectAndPhases]);
 
-  const loadedProject = useSelector(
+  const loadedHistory = useSelector(
     (state) => state.projects.userHistoryProjects
-  ).find((project) => project.id === passedProjectId);
+  ).find((history) => history.finishedProject.id === passedProjectId);
+  const loadedProject = loadedHistory.finishedProject;
 
   const currentProjectCategories = useSelector(
     (state) => state.categories.projectCategories
@@ -109,7 +108,7 @@ const PrevProjectHomeScreen = (props) => {
     return (
       <View style={styles.centered}>
         <Text>An error occured!</Text>
-        <Button title="Try again" onPress={loadProjectAndPhases} />
+        <Button title='Try again' onPress={loadProjectAndPhases} />
       </View>
     );
   }
@@ -119,21 +118,21 @@ const PrevProjectHomeScreen = (props) => {
       <View style={styles.screen}>
         <View style={styles.card}>
           <ImageBackground source={image} style={styles.image} blurRadius={0}>
-            <View style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
-              <View style={{ alignItems: "center" }}>
+            <View style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}>
+              <View style={{ alignItems: 'center' }}>
                 <View style={styles.companyName}>
                   <Text style={styles.companyNameText}>GREEN</Text>
                   <Text style={styles.companyNameText}>
-                    {"  "} CIVIL {"  "}
+                    {'  '} CIVIL {'  '}
                   </Text>
                   <Text style={styles.companyNameText}>CON</Text>
                 </View>
               </View>
 
               <GraphContainer
-                textColor="white"
+                textColor='white'
                 budgetSpent={projectTotalBudgetSpent}
-                startedDate={loadedProject.startDate}
+                startedDate={loadedProject.startedDate}
                 estimatedDate={loadedProject.estimatedDate}
                 estimatedBudget={loadedProject.estimatedBudget}
                 editable={false}
@@ -142,7 +141,7 @@ const PrevProjectHomeScreen = (props) => {
           </ImageBackground>
         </View>
 
-        <ProjectNameContainer projectName={loadedProject.projectTitle} />
+        <ProjectNameContainer projectName={loadedProject.title} />
 
         {currentProjectCategories.length > 0
           ? currentProjectCategories.map((item, index) => {
@@ -152,7 +151,7 @@ const PrevProjectHomeScreen = (props) => {
                   title={item.title}
                   onSelect={() => {
                     props.navigation.navigate({
-                      routeName: "PreviousProjectPhase",
+                      routeName: 'PreviousProjectPhase',
                       params: {
                         phaseId: item.id,
                         phaseTitle: item.title,
@@ -171,7 +170,7 @@ const PrevProjectHomeScreen = (props) => {
 
 PrevProjectHomeScreen.navigationOptions = (navData) => {
   return {
-    headerTitle: "Your History",
+    headerTitle: 'Your History',
   };
 };
 
@@ -184,49 +183,49 @@ const styles = StyleSheet.create({
   },
   centered: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 30,
   },
   card: {
     flex: 1,
-    shadowColor: "black",
+    shadowColor: 'black',
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 5,
     borderRadius: 10,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   companyName: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   companyNameText: {
-    color: "white",
-    fontFamily: "open-sans-bold",
+    color: 'white',
+    fontFamily: 'open-sans-bold',
     fontSize: 20,
   },
   addTaskContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginLeft: 5,
     padding: 10,
   },
   image: {
-    resizeMode: "cover",
-    justifyContent: "center",
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   editProject: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     width: 30,
-    alignItems: "center",
+    alignItems: 'center',
   },
   footer: {
     margin: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   button: {
     marginVertical: 10,

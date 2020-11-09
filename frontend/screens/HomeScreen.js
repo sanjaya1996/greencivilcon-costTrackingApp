@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,32 +9,32 @@ import {
   Platform,
   Alert,
   StatusBar,
-} from "react-native";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import { useSelector, useDispatch } from "react-redux";
-import { Ionicons } from "@expo/vector-icons";
+} from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { useSelector, useDispatch } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
 
-import GraphContainer from "../components/GraphContainer";
-import ProjectNameContainer from "../components/ProjectNameContainer";
-import PhaseAndPeople from "../components/PhaseAndPeople";
-import HeaderButton from "../components/HeaderButton";
-import AddNewItem from "../components/AddNewItem";
-import LoadingSpinner from "../components/LoadingSpinner";
-import DefaultStatusBar from "../components/DefaultStatusBar";
-import Colors from "../constant/Colors";
-import Card from "../components/Card";
-import * as projectsActions from "../store/actions/projects";
-import * as projectPhasesActions from "../store/actions/categories";
-import * as materialsActions from "../store/actions/materials";
-import * as laborsActions from "../store/actions/labors";
-import * as miscellanyActions from "../store/actions/miscellanies";
-import * as clientsActions from "../store/actions/clients";
-import * as supervisorsActions from "../store/actions/supervisors";
+import GraphContainer from '../components/GraphContainer';
+import ProjectNameContainer from '../components/ProjectNameContainer';
+import PhaseAndPeople from '../components/PhaseAndPeople';
+import HeaderButton from '../components/HeaderButton';
+import AddNewItem from '../components/AddNewItem';
+import LoadingSpinner from '../components/LoadingSpinner';
+import DefaultStatusBar from '../components/DefaultStatusBar';
+import Colors from '../constant/Colors';
+import Card from '../components/Card';
+import * as projectsActions from '../store/actions/projects';
+import * as projectPhasesActions from '../store/actions/categories';
+import * as materialsActions from '../store/actions/materials';
+import * as laborsActions from '../store/actions/labors';
+import * as miscellanyActions from '../store/actions/miscellanies';
+import * as clientsActions from '../store/actions/clients';
+import * as supervisorsActions from '../store/actions/supervisors';
 
 //Background Image
 const image = {
   uri:
-    "https://www.levelset.com/wp-content/uploads/2019/03/bigstock-Construction-Site-5042942.jpg",
+    'https://www.levelset.com/wp-content/uploads/2019/03/bigstock-Construction-Site-5042942.jpg',
 };
 
 const HomeScreen = (props) => {
@@ -137,11 +137,11 @@ const HomeScreen = (props) => {
   };
 
   const deleteClientHandler = (id) => {
-    Alert.alert("Are you sure?", "Do you really want to delete this client?", [
-      { text: "No", style: "default" },
+    Alert.alert('Are you sure?', 'Do you really want to delete this client?', [
+      { text: 'No', style: 'default' },
       {
-        text: "Yes",
-        style: "destructive",
+        text: 'Yes',
+        style: 'destructive',
         onPress: () => deleteConfirmHandler(id),
       },
     ]);
@@ -155,7 +155,7 @@ const HomeScreen = (props) => {
     return (
       <View style={styles.centered}>
         <Text>An error occured!</Text>
-        <Button title="Try again" onPress={loadProjectAndPhases} />
+        <Button title='Try again' onPress={loadProjectAndPhases} />
       </View>
     );
   }
@@ -163,17 +163,17 @@ const HomeScreen = (props) => {
   if (!isLoading && userProject.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={{ fontFamily: "open-sans" }}>
+        <Text style={{ fontFamily: 'open-sans' }}>
           You don't have any project recently!
         </Text>
-        <Text style={{ fontFamily: "open-sans" }}>
+        <Text style={{ fontFamily: 'open-sans' }}>
           Do you want to start new one ?
         </Text>
         <AddNewItem
-          title="Start New Project"
+          title='Start New Project'
           onSelect={() => {
             props.navigation.navigate({
-              routeName: "EditProject",
+              routeName: 'EditProject',
             });
           }}
         />
@@ -187,19 +187,19 @@ const HomeScreen = (props) => {
       <View style={styles.screen}>
         <View style={styles.card}>
           <ImageBackground source={image} style={styles.image} blurRadius={0}>
-            <View style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
-              <View style={{ alignItems: "center" }}>
+            <View style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}>
+              <View style={{ alignItems: 'center' }}>
                 <View style={styles.companyName}>
                   <Text style={styles.companyNameText}>GREEN</Text>
                   <Text style={styles.companyNameText}>
-                    {"  "} CIVIL {"  "}
+                    {'  '} CIVIL {'  '}
                   </Text>
                   <Text style={styles.companyNameText}>CON</Text>
                 </View>
               </View>
 
               <GraphContainer
-                textColor="white"
+                textColor='white'
                 budgetSpent={projectTotalBudgetSpent}
                 startedDate={userProject.startDate}
                 estimatedDate={userProject.estimatedDate}
@@ -208,12 +208,12 @@ const HomeScreen = (props) => {
               />
               <View style={styles.editProject}>
                 <Ionicons
-                  name="md-create"
+                  name='md-create'
                   size={24}
                   color={Colors.buttonColor}
                   onPress={() =>
                     props.navigation.navigate({
-                      routeName: "EditProject",
+                      routeName: 'EditProject',
                       params: { projectId: userProject.id },
                     })
                   }
@@ -233,7 +233,7 @@ const HomeScreen = (props) => {
                   title={item.title}
                   onSelect={() => {
                     props.navigation.navigate({
-                      routeName: "ProjectPhase",
+                      routeName: 'ProjectPhase',
                       params: {
                         phaseId: item.id,
                         phaseTitle: item.title,
@@ -248,12 +248,12 @@ const HomeScreen = (props) => {
         <View style={styles.footer}>
           {currentProjectCategories.length === 0 ? (
             <AddNewItem
-              title="Start Construction"
+              title='Start Construction'
               textSize={18}
               onSelect={() =>
                 props.navigation.navigate({
-                  routeName: "EditProjectPhase",
-                  params: { title: "Construction", projectId: userProject.id },
+                  routeName: 'EditProjectPhase',
+                  params: { title: 'Construction', projectId: userProject.id },
                 })
               }
             />
@@ -261,13 +261,13 @@ const HomeScreen = (props) => {
 
           {currentProjectCategories.length === 1 ? (
             <AddNewItem
-              title="Start Interior Design"
+              title='Start Interior Design'
               textSize={18}
               onSelect={() =>
                 props.navigation.navigate({
-                  routeName: "EditProjectPhase",
+                  routeName: 'EditProjectPhase',
                   params: {
-                    title: "Interior Design",
+                    title: 'Interior Design',
                     projectId: userProject.id,
                   },
                 })
@@ -277,12 +277,12 @@ const HomeScreen = (props) => {
 
           {currentProjectCategories.length === 2 ? (
             <AddNewItem
-              title="Start Maintenance"
+              title='Start Maintenance'
               textSize={18}
               onSelect={() =>
                 props.navigation.navigate({
-                  routeName: "EditProjectPhase",
-                  params: { title: "Maintenance", projectId: userProject.id },
+                  routeName: 'EditProjectPhase',
+                  params: { title: 'Maintenance', projectId: userProject.id },
                 })
               }
             />
@@ -291,21 +291,21 @@ const HomeScreen = (props) => {
           <View
             style={{
               ...styles.client,
-              alignItems: client ? null : "center",
+              alignItems: client ? null : 'center',
             }}
           >
             {client ? (
               <View>
                 <View>
-                  <Text style={{ fontFamily: "open-sans-bold", fontSize: 16 }}>
-                    Client:{" "}
+                  <Text style={{ fontFamily: 'open-sans-bold', fontSize: 16 }}>
+                    Client:{' '}
                   </Text>
                 </View>
                 <Card>
                   <View>
                     <View style={styles.clientName}>
                       <Text style={styles.defaultText}>
-                        {client.firstName + " " + client.lastName}
+                        {client.firstName + ' ' + client.lastName}
                       </Text>
                     </View>
                     <View style={styles.clientDetails}>
@@ -318,12 +318,12 @@ const HomeScreen = (props) => {
                     <View style={styles.buttonsContainer}>
                       <View>
                         <Ionicons
-                          name="md-create"
+                          name='md-create'
                           size={24}
                           color={Colors.buttonColor}
                           onPress={() =>
                             props.navigation.navigate({
-                              routeName: "EditPeople",
+                              routeName: 'EditPeople',
                               params: { clientId: client.id },
                             })
                           }
@@ -332,12 +332,12 @@ const HomeScreen = (props) => {
                       <View></View>
                       <View>
                         {isDeleting ? (
-                          <LoadingSpinner size="small" />
+                          <LoadingSpinner size='small' />
                         ) : (
                           <Ionicons
-                            name="ios-remove-circle-outline"
+                            name='ios-remove-circle-outline'
                             size={24}
-                            color="red"
+                            color='red'
                             onPress={() => deleteClientHandler(client.id)}
                           />
                         )}
@@ -348,11 +348,11 @@ const HomeScreen = (props) => {
               </View>
             ) : (
               <AddNewItem
-                title="Add Client"
+                title='Add Client'
                 textSize={18}
                 onSelect={() =>
                   props.navigation.navigate({
-                    routeName: "EditPeople",
+                    routeName: 'EditPeople',
                     params: { projectId: userProject.id },
                   })
                 }
@@ -362,19 +362,19 @@ const HomeScreen = (props) => {
 
           <View style={styles.button}>
             <Button
-              title="Finish project"
+              title='Finish project'
               color={Colors.accentColor}
               onPress={() => {
                 Alert.alert(
-                  "Are you sure?",
-                  "It will remove your project to history!",
+                  'Are you sure?',
+                  'It will remove your project to history!',
                   [
-                    { text: "No", style: "default" },
+                    { text: 'No', style: 'default' },
                     {
-                      text: "Yes",
-                      style: "destructive",
+                      text: 'Yes',
+                      style: 'destructive',
                       onPress: () =>
-                        dispatch(projectsActions.finishProject(userProject)),
+                        dispatch(projectsActions.finishProject(userProject.id)),
                     },
                   ]
                 );
@@ -388,12 +388,12 @@ const HomeScreen = (props) => {
 };
 HomeScreen.navigationOptions = (navData) => {
   return {
-    headerTitle: "Your Project",
+    headerTitle: 'Your Project',
     headerLeft: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
-          title="Menu"
-          iconName="ios-menu"
+          title='Menu'
+          iconName='ios-menu'
           onPress={() => {
             navData.navigation.toggleDrawer();
           }}
@@ -412,70 +412,70 @@ const styles = StyleSheet.create({
   },
   centered: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 30,
   },
   card: {
     flex: 1,
-    shadowColor: "black",
+    shadowColor: 'black',
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 5,
     borderRadius: 10,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   companyName: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   companyNameText: {
-    color: "white",
-    fontFamily: "open-sans-bold",
+    color: 'white',
+    fontFamily: 'open-sans-bold',
     fontSize: 20,
   },
   addTaskContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginLeft: 5,
     padding: 10,
   },
   image: {
-    resizeMode: "cover",
-    justifyContent: "center",
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   editProject: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     width: 30,
-    alignItems: "center",
+    alignItems: 'center',
   },
   footer: {
     margin: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   client: {
     margin: 40,
-    width: "100%",
+    width: '100%',
   },
   clientName: {
-    flexDirection: "row",
-    alignSelf: "center",
+    flexDirection: 'row',
+    alignSelf: 'center',
     padding: 10,
   },
   clientDetails: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 10,
   },
   defaultText: {
-    fontFamily: "open-sans",
+    fontFamily: 'open-sans',
   },
   buttonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 10,
   },
   button: {

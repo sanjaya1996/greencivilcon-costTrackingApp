@@ -6,7 +6,6 @@ import connectDB from './config/db.js';
 import { notFound, erroHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
-import historyProjectRoutes from './routes/historyProjectRoutes.js';
 import projectPhaseRoutes from './routes/projectPhaseRoutes.js';
 
 dotenv.config();
@@ -24,8 +23,6 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoutes);
 
 app.use('/api/projects', projectRoutes);
-
-app.use('/api/historyprojects', historyProjectRoutes);
 
 app.use('/api/projectphases', projectPhaseRoutes);
 

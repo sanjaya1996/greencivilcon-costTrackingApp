@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   FlatList,
   View,
@@ -9,20 +9,20 @@ import {
   Platform,
   Alert,
   Button,
-} from "react-native";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import { Ionicons } from "@expo/vector-icons";
-import { useSelector, useDispatch } from "react-redux";
+} from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { Ionicons } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
 
-import HeaderButton from "../components/HeaderButton";
-import LoadingSpinner from "../components/LoadingSpinner";
-import * as projectsActions from "../store/actions/projects";
-import * as categoriesActions from "../store/actions/categories";
-import * as miniPhasesActions from "../store/actions/miniPhases";
-import * as laborsActions from "../store/actions/labors";
-import * as materialsActions from "../store/actions/materials";
-import * as miscellaniesActions from "../store/actions/miscellanies";
-import Colors from "../constant/Colors";
+import HeaderButton from '../components/HeaderButton';
+import LoadingSpinner from '../components/LoadingSpinner';
+import * as projectsActions from '../store/actions/projects';
+import * as categoriesActions from '../store/actions/categories';
+import * as miniPhasesActions from '../store/actions/miniPhases';
+import * as laborsActions from '../store/actions/labors';
+import * as materialsActions from '../store/actions/materials';
+import * as miscellaniesActions from '../store/actions/miscellanies';
+import Colors from '../constant/Colors';
 
 const ProjectHistoryScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +42,7 @@ const ProjectHistoryScreen = (props) => {
 
   useEffect(() => {
     const willFocusSub = props.navigation.addListener(
-      "willFocus",
+      'willFocus',
       loadHistoryProjects
     );
 
@@ -82,27 +82,27 @@ const ProjectHistoryScreen = (props) => {
   );
 
   const deleteConfirmedHandler = async (
-    projectId,
-    phaseIds,
-    mPIds,
-    lbrIds,
-    matIds,
-    misclnyIds
+    historyId
+    // phaseIds,
+    // mPIds,
+    // lbrIds,
+    // matIds,
+    // misclnyIds
   ) => {
     setIsLoading(true);
-    await dispatch(projectsActions.deleteHistoryProject(projectId));
-    await dispatch(categoriesActions.deletePhasesOnDltProject(phaseIds));
-    await dispatch(miniPhasesActions.deleteMphaseOnDltProject(mPIds));
-    await dispatch(laborsActions.deleteLaborsOnDltProject(lbrIds));
-    await dispatch(materialsActions.deleteMaterialsOnDltProject(matIds));
-    await dispatch(
-      miscellaniesActions.deleteMiscellanyOnDltProject(misclnyIds)
-    );
+    await dispatch(projectsActions.deleteHistoryProject(historyId));
+    // await dispatch(categoriesActions.deletePhasesOnDltProject(phaseIds));
+    // await dispatch(miniPhasesActions.deleteMphaseOnDltProject(mPIds));
+    // await dispatch(laborsActions.deleteLaborsOnDltProject(lbrIds));
+    // await dispatch(materialsActions.deleteMaterialsOnDltProject(matIds));
+    // await dispatch(
+    //   miscellaniesActions.deleteMiscellanyOnDltProject(misclnyIds)
+    // );
     setIsLoading(false);
   };
 
   const deleteProjectHandler = (
-    projectId,
+    historyId,
     phaseIds,
     mPIds,
     lbrIds,
@@ -110,16 +110,16 @@ const ProjectHistoryScreen = (props) => {
     misclnyIds
   ) => {
     Alert.alert(
-      "Are you sure?",
-      "Do you really want to delete project? Because, you will loose everything belongs to this project!",
+      'Are you sure?',
+      'Do you really want to delete project? Because, you will loose everything belongs to this project!',
       [
-        { text: "No", style: "default" },
+        { text: 'No', style: 'default' },
         {
-          text: "Yes",
-          style: "destructive",
+          text: 'Yes',
+          style: 'destructive',
           onPress: () =>
             deleteConfirmedHandler(
-              projectId,
+              historyId,
               phaseIds,
               mPIds,
               lbrIds,
@@ -133,7 +133,7 @@ const ProjectHistoryScreen = (props) => {
 
   let TouchableCmp = TouchableOpacity;
 
-  if (Platform.OS === "android" && Platform.Version >= 21) {
+  if (Platform.OS === 'android' && Platform.Version >= 21) {
     TouchableCmp = TouchableNativeFeedback;
   }
 
@@ -145,7 +145,7 @@ const ProjectHistoryScreen = (props) => {
     return (
       <View style={styles.centered}>
         <Text>An error occured!</Text>
-        <Button title="Try again" onPress={loadHistoryProjects} />
+        <Button title='Try again' onPress={loadHistoryProjects} />
       </View>
     );
   }
@@ -153,7 +153,7 @@ const ProjectHistoryScreen = (props) => {
   if (!isLoading && userHistoryProjects.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={{ fontFamily: "open-sans" }}>
+        <Text style={{ fontFamily: 'open-sans' }}>
           You don't have any Previous Projects!
         </Text>
       </View>
@@ -163,15 +163,16 @@ const ProjectHistoryScreen = (props) => {
   return (
     <View style={styles.screen}>
       <FlatList
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.finishedProject.id}
         data={userHistoryProjects}
         renderItem={(itemData) => {
+          const project = itemData.item.finishedProject;
           const projectClient = userProjectClients.find(
-            (client) => client.projectId === itemData.item.id
+            (client) => client.projectId === project.id
           );
           // Getting all assets belonging to rendered project. It's purpose is to delete all assets that belong to the deleted project.
           const phasesOfRenderedProject = allProjectPhases.filter(
-            (phase) => phase.projectId.indexOf(itemData.item.id) >= 0
+            (phase) => phase.projectId.indexOf(project._id) >= 0
           );
           const mPhasesOfRenderedProject = allMiniPhases.filter((miniPhase) =>
             phasesOfRenderedProject.some(
@@ -213,16 +214,14 @@ const ProjectHistoryScreen = (props) => {
                 style={{ flex: 1 }}
                 onPress={() =>
                   props.navigation.navigate({
-                    routeName: "PreviousProjectHome",
-                    params: { projectId: itemData.item.id },
+                    routeName: 'PreviousProjectHome',
+                    params: { projectId: project._id },
                   })
                 }
               >
                 <View style={styles.card}>
                   <View style={styles.title}>
-                    <Text style={styles.titleText}>
-                      {itemData.item.projectTitle}
-                    </Text>
+                    <Text style={styles.titleText}>{project.title}</Text>
                   </View>
 
                   <View style={styles.cardFooter}>
@@ -231,7 +230,7 @@ const ProjectHistoryScreen = (props) => {
                       {projectClient ? (
                         <Text style={styles.valueText}>
                           {projectClient.firstName +
-                            " " +
+                            ' ' +
                             projectClient.lastName}
                         </Text>
                       ) : (
@@ -244,12 +243,12 @@ const ProjectHistoryScreen = (props) => {
                     </View>
                     <View style={styles.deleteButton}>
                       <Ionicons
-                        name="ios-remove-circle-outline"
+                        name='ios-remove-circle-outline'
                         size={24}
-                        color="red"
+                        color='red'
                         onPress={() =>
                           deleteProjectHandler(
-                            itemData.item.id,
+                            itemData.item._id,
                             projectPhaseIds,
                             miniPhaseIds,
                             laborIds,
@@ -272,13 +271,13 @@ const ProjectHistoryScreen = (props) => {
 
 ProjectHistoryScreen.navigationOptions = (navData) => {
   return {
-    headerTitle: "Completed Projects",
+    headerTitle: 'Completed Projects',
     headerLeft: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
-          title="Menu"
-          iconName="ios-menu"
-          color="white"
+          title='Menu'
+          iconName='ios-menu'
+          color='white'
           onPress={() => {
             navData.navigation.toggleDrawer();
           }}
@@ -294,15 +293,15 @@ const styles = StyleSheet.create({
   },
   centered: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   card: {
     // backgroundColor: "rgba(0,0,0,0.75)",
-    backgroundColor: "white",
+    backgroundColor: 'white',
     margin: 10,
-    shadowColor: "black",
+    shadowColor: 'black',
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 10,
@@ -312,38 +311,38 @@ const styles = StyleSheet.create({
   gridItem: {
     flex: 1,
     borderRadius: 10,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
 
   title: {
-    alignItems: "center",
+    alignItems: 'center',
     padding: 10,
   },
   titleText: {
     color: Colors.buttonColor,
-    fontFamily: "open-sans-bold",
+    fontFamily: 'open-sans-bold',
     fontSize: 20,
-    textDecorationLine: "underline",
+    textDecorationLine: 'underline',
   },
   viewButton: {
-    alignItems: "center",
+    alignItems: 'center',
     marginVertical: 10,
   },
   cardFooter: {
     padding: 10,
   },
   dataContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 5,
   },
   labelText: {
-    fontFamily: "open-sans-bold",
+    fontFamily: 'open-sans-bold',
   },
   valueText: {
-    fontFamily: "open-sans",
+    fontFamily: 'open-sans',
   },
   deleteButton: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
   },
 });
 export default ProjectHistoryScreen;
