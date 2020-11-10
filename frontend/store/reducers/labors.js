@@ -1,12 +1,12 @@
-import { MINIPHASELABORS, LABORS } from "../../data/stakeholders";
+import { MINIPHASELABORS, LABORS } from '../../data/stakeholders';
 import {
   DELETE_MPHASE_LABOR,
   CREATE_MPHASE_LABOR,
   UPDATE_MPHASE_LABOR,
   SET_LABORS,
-} from "../actions/labors";
-import { DELETE_MINIPHASE } from "../actions/miniPhases";
-import MiniPhaseLabor from "../../models/miniPhaseLabor";
+} from '../actions/labors';
+import { DELETE_MINIPHASE } from '../actions/miniPhases';
+import MiniPhaseLabor from '../../models/miniPhaseLabor';
 
 const initialState = {
   miniPhaseLabors: [],
@@ -61,7 +61,7 @@ const laborsReducer = (state = initialState, action) => {
         action.laborData.amountPaid,
         action.laborData.accountDetails,
         action.laborData.description,
-        action.laborData.supervisorId
+        state.miniPhaseLabors[laborIndex].supervisorId
       );
 
       const updatedMphaseLabors = [...state.miniPhaseLabors];

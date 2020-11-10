@@ -8,6 +8,7 @@ import userRoutes from './routes/userRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import projectPhaseRoutes from './routes/projectPhaseRoutes.js';
 import miniPhaseRoutes from './routes/miniPhaseRoutes.js';
+import laborRoutes from './routes/laborRoutes.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/projectphases', projectPhaseRoutes);
 app.use('/api/miniphases', miniPhaseRoutes);
+app.use('/api/labors', laborRoutes);
 
 app.use(notFound);
 

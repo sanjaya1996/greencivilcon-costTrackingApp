@@ -1,21 +1,20 @@
-import MiniPhaseLabor from "../../models/miniPhaseLabor";
+import MiniPhaseLabor from '../../models/miniPhaseLabor';
 
-export const DELETE_MPHASE_LABOR = "DELETE_MPHASE_LABOR";
-export const CREATE_MPHASE_LABOR = "CREATE_MPHASE_LABOR";
-export const UPDATE_MPHASE_LABOR = "UPDATE_MPHASE_LABOR";
-export const SET_LABORS = "SET_LABORS";
-export const DELETE_LABORS_ONDLTMPHASE = "DELETE_LABORS_ONDLTMPHASE";
+export const DELETE_MPHASE_LABOR = 'DELETE_MPHASE_LABOR';
+export const CREATE_MPHASE_LABOR = 'CREATE_MPHASE_LABOR';
+export const UPDATE_MPHASE_LABOR = 'UPDATE_MPHASE_LABOR';
+export const SET_LABORS = 'SET_LABORS';
+export const DELETE_LABORS_ONDLTMPHASE = 'DELETE_LABORS_ONDLTMPHASE';
 
 export const fetchLabors = () => {
   return async (dispatch) => {
     // any async code you want
     try {
-      const response = await fetch(
-        "https://costtracking-app.firebaseio.com/labors.json"
-      );
+      const response = await fetch('http://10.0.2.2:5000/api/labors');
 
       if (!response.ok) {
-        throw new Error("Something went wrong!");
+        const errorResData = await response.json();
+        throw new Error(errorResData.message);
       }
 
       const resData = await response.json();
@@ -23,9 +22,9 @@ export const fetchLabors = () => {
       for (const key in resData) {
         loadedLabors.push(
           new MiniPhaseLabor(
-            key,
-            resData[key].mPhaseId,
-            resData[key].projectPhaseId,
+            resData[key]._id,
+            resData[key].miniPhase,
+            resData[key].projectPhase,
             resData[key].fName,
             resData[key].lName,
             resData[key].email,
@@ -36,7 +35,7 @@ export const fetchLabors = () => {
             resData[key].amountPaid,
             resData[key].accountDetails,
             resData[key].description,
-            resData[key].supervisorId
+            resData[key].supervisor
           )
         );
       }
@@ -53,15 +52,16 @@ export const fetchLabors = () => {
 export const deleteMphaseLabor = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/labors/${id}.json?auth=${token}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await fetch(`http://10.0.2.2:5000/api/labors/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     dispatch({ type: DELETE_MPHASE_LABOR, laborId: id });
@@ -86,43 +86,13 @@ export const createMphaseLabor = (
     const supervisorId = getState().auth.userId;
     const token = getState().auth.token;
     // any async code you want
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/labors.json?auth=${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "applicaiton/json",
-        },
-        body: JSON.stringify({
-          mPhaseId,
-          projectPhaseId,
-          fName,
-          lName,
-          email,
-          phone,
-          role,
-          payRate,
-          availability,
-          amountPaid,
-          accountDetails,
-          description,
-          supervisorId,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Something went wrong!");
-    }
-
-    const resData = await response.json();
-
-    dispatch({
-      type: CREATE_MPHASE_LABOR,
-      laborData: {
-        id: resData.name,
-        mPhaseId,
-        projectPhaseId,
+    const response = await fetch('http://10.0.2.2:5000/api/labors', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
         fName,
         lName,
         email,
@@ -130,10 +100,39 @@ export const createMphaseLabor = (
         role,
         payRate,
         availability,
-        amountPaid,
         accountDetails,
-        description,
+        amountPaid,
         supervisorId,
+        projectPhaseId,
+        mPhaseId,
+        description,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
+    }
+
+    const resData = await response.json();
+
+    dispatch({
+      type: CREATE_MPHASE_LABOR,
+      laborData: {
+        id: resData._id,
+        mPhaseId: resData.miniPhase,
+        projectPhaseId: resData.projectPhase,
+        fName: resData.fName,
+        lName: resData.lName,
+        email: resData.email,
+        phone: resData.phone,
+        role: resData.role,
+        payRate: resData.payRate,
+        availability: resData.availability,
+        amountPaid: resData.amountPaid,
+        accountDetails: resData.accountDetails,
+        description: resData.description,
+        supervisorId: resData.supervisor,
       },
     });
   };
@@ -153,39 +152,15 @@ export const updateMphaseLabor = (
   description
 ) => {
   return async (dispatch, getState) => {
-    const supervisorId = getState().auth.userId;
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/labors/${id}.json?auth=${token}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "applicaiton/json",
-        },
-        body: JSON.stringify({
-          fName,
-          lName,
-          email,
-          phone,
-          role,
-          payRate,
-          availability,
-          amountPaid,
-          accountDetails,
-          description,
-          supervisorId,
-        }),
-      }
-    );
 
-    if (!response.ok) {
-      throw new Error("Something went wrong!");
-    }
-
-    dispatch({
-      type: UPDATE_MPHASE_LABOR,
-      lid: id,
-      laborData: {
+    const response = await fetch(`http://10.0.2.2:5000/api/labors/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
         fName,
         lName,
         email,
@@ -196,44 +171,31 @@ export const updateMphaseLabor = (
         amountPaid,
         accountDetails,
         description,
-        supervisorId,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
+    }
+
+    const resData = await response.json();
+
+    dispatch({
+      type: UPDATE_MPHASE_LABOR,
+      lid: id,
+      laborData: {
+        fName: resData.fName,
+        lName: resData.lName,
+        email: resData.email,
+        phone: resData.phone,
+        role: resData.role,
+        payRate: resData.payRate,
+        availability: resData.availability,
+        amountPaid: resData.amountPaid,
+        accountDetails: resData.accountDetails,
+        description: resData.description,
       },
-    });
-  };
-};
-
-export const deleteLaborsOnDltMphase = (laborIds) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    laborIds.forEach(async (id) => {
-      const response = await fetch(
-        `https://costtracking-app.firebaseio.com/labors/${id}.json?auth=${token}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
-      }
-    });
-  };
-};
-
-export const deleteLaborsOnDltProject = (laborIds) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    laborIds.forEach(async (id) => {
-      const response = await fetch(
-        `https://costtracking-app.firebaseio.com/labors/${id}.json?auth=${token}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
-      }
     });
   };
 };

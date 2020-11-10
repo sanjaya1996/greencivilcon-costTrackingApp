@@ -5,7 +5,7 @@ const projectSchema = mongoose.Schema({
   supervisor: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'Supervisor',
+    ref: 'User',
   },
   title: { type: String, required: true },
   address: { type: String, required: true },
