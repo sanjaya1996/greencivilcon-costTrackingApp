@@ -3,6 +3,9 @@ import asyncHandler from 'express-async-handler';
 import { HistoryProject, Project } from '../models/project.js';
 import ProjectPhase from '../models/projectPhase.js';
 import { MiniPhase, SpecialMiniPhase } from '../models/miniPhase.js';
+import Labor from '../models/labor.js';
+import Material from '../models/material.js';
+import Miscellany from '../models/miscellany.js';
 
 const getProjects = asyncHandler(async (req, res) => {
   const projects = await Project.find({});
@@ -103,12 +106,15 @@ const deleteHistoryProject = asyncHandler(async (req, res) => {
     const projectId = historyProject.finishedProject._id;
     const projectPhases = await ProjectPhase.find({ project: projectId });
 
-    //delete projectPhases
     if (projectPhases.length > 0) {
       let projectPhasesIds = [];
       for (const key in projectPhases) {
         projectPhasesIds.push(projectPhases[key]._id);
       }
+      // Delete all other child Resources that belongs to deleted project
+      await Labor.deleteMany({ projectPhase: { $in: projectPhasesIds } });
+      await Material.deleteMany({ projectPhase: { $in: projectPhasesIds } });
+      await Miscellany.deleteMany({ projectPhase: { $in: projectPhasesIds } });
 
       await SpecialMiniPhase.deleteMany({
         'miniPhase.projectPhase': { $in: projectPhasesIds },
@@ -120,7 +126,9 @@ const deleteHistoryProject = asyncHandler(async (req, res) => {
     }
 
     await historyProject.remove();
-    res.json({ message: 'History Project with Phases deleted' });
+    res.json({
+      message: 'History Project and all Project Child resources deleted',
+    });
   } else {
     res.status(404);
     throw new Error('Project not found');

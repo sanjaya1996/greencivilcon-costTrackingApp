@@ -1,33 +1,31 @@
-import MiniPhaseMaterial from "../../models/miniPhaseMaterial";
+import MiniPhaseMaterial from '../../models/miniPhaseMaterial';
 
-export const DELETE_MPHASE_MATERIAL = "DELETE_MPHASE_MATERIAL";
-export const CREATE_MPHASE_MATERIAL = "CREATE_MPHASE_MATERIAL";
-export const UPDATE_MPHASE_MATERIAL = "UPDATE_MPHASE_MATERIAL";
-export const SET_MATERIALS = "SET_MATERIALS";
-export const DELETE_MATERIALS_ONDLTMPHASE = "DELETE_MATERIALS_ONDLTMPHASE";
+export const DELETE_MPHASE_MATERIAL = 'DELETE_MPHASE_MATERIAL';
+export const CREATE_MPHASE_MATERIAL = 'CREATE_MPHASE_MATERIAL';
+export const UPDATE_MPHASE_MATERIAL = 'UPDATE_MPHASE_MATERIAL';
+export const SET_MATERIALS = 'SET_MATERIALS';
+export const DELETE_MATERIALS_ONDLTMPHASE = 'DELETE_MATERIALS_ONDLTMPHASE';
 
 export const fetchMaterials = () => {
   return async (dispatch) => {
     //any async code you want!
     try {
-      const response = await fetch(
-        "https://costtracking-app.firebaseio.com/materials.json"
-      );
+      const response = await fetch('http://10.0.2.2:5000/api/materials');
 
       if (!response.ok) {
-        throw new Error("Something went wrong!");
+        const errorResData = await response.json();
+        throw new Error(errorResData.message);
       }
-
       const resData = await response.json();
       const loadedMaterials = [];
 
       for (const key in resData) {
         loadedMaterials.push(
           new MiniPhaseMaterial(
-            key,
-            resData[key].mPhaseId,
-            resData[key].projectPhaseId,
-            resData[key].materialName,
+            resData[key]._id,
+            resData[key].miniPhase,
+            resData[key].projectPhase,
+            resData[key].name,
             resData[key].quantityUsed,
             resData[key].rate,
             resData[key].totalCost,
@@ -45,15 +43,16 @@ export const fetchMaterials = () => {
 export const deleteMphaseMaterial = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/materials/${id}.json?auth=${token}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await fetch(`http://10.0.2.2:5000/api/materials/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     dispatch({ type: DELETE_MPHASE_MATERIAL, materialId: id });
@@ -72,35 +71,13 @@ export const createMphaseMaterial = (
   return async (dispatch, getState) => {
     const token = getState().auth.token;
     //any async code you want!
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/materials.json?auth=${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mPhaseId,
-          projectPhaseId,
-          materialName,
-          quantityUsed,
-          rate,
-          totalCost,
-          description,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Something went wrong!");
-    }
-
-    const resData = await response.json();
-
-    dispatch({
-      type: CREATE_MPHASE_MATERIAL,
-      materialData: {
-        id: resData.name,
+    const response = await fetch('http://10.0.2.2:5000/api/materials', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
         mPhaseId,
         projectPhaseId,
         materialName,
@@ -108,6 +85,27 @@ export const createMphaseMaterial = (
         rate,
         totalCost,
         description,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
+    }
+
+    const resData = await response.json();
+
+    dispatch({
+      type: CREATE_MPHASE_MATERIAL,
+      materialData: {
+        id: resData._id,
+        mPhaseId: resData.miniPhase,
+        projectPhaseId: resData.projectPhase,
+        materialName: resData.name,
+        quantityUsed: resData.quantityUsed,
+        rate: resData.rate,
+        totalCost: resData.totalCost,
+        description: resData.description,
       },
     });
   };
@@ -123,73 +121,38 @@ export const updateMphaseMaterial = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/materials/${id}.json?auth=${token}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          materialName,
-          quantityUsed,
-          rate,
-          totalCost,
-          description,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Something went wrong!");
-    }
-
-    dispatch({
-      type: UPDATE_MPHASE_MATERIAL,
-      matId: id,
-      materialData: {
+    const response = await fetch(`http://10.0.2.2:5000/api/materials/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
         materialName,
         quantityUsed,
         rate,
         totalCost,
         description,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
+    }
+
+    const resData = await response.json();
+
+    dispatch({
+      type: UPDATE_MPHASE_MATERIAL,
+      matId: resData._id,
+      materialData: {
+        materialName: resData.name,
+        quantityUsed: resData.quantityUsed,
+        rate: resData.rate,
+        totalCost: resData.totalCost,
+        description: resData.description,
       },
-    });
-  };
-};
-
-export const deleteMaterialsOnDltMphase = (materialIds) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    materialIds.forEach(async (id) => {
-      const response = await fetch(
-        `https://costtracking-app.firebaseio.com/materials/${id}.json?auth=${token}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
-      }
-    });
-  };
-};
-
-export const deleteMaterialsOnDltProject = (materialIds) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    materialIds.forEach(async (id) => {
-      const response = await fetch(
-        `https://costtracking-app.firebaseio.com/materials/${id}.json?auth=${token}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
-      }
     });
   };
 };

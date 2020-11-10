@@ -1,20 +1,19 @@
-import MiniPhaseMiscellaneous from "../../models/miniPhaseMiscellaneous";
+import MiniPhaseMiscellaneous from '../../models/miniPhaseMiscellaneous';
 
-export const DELETE_MPHASE_MISCELLANY = "DELETE_MPHASE_MISCELLANY";
-export const CREATE_MPHASE_MISCELLANY = "CREATE_MPHASE_MISCELLANY";
-export const UPDATE_MPHASE_MISCELLANY = "UPDATE_MPHASE_MISCELLANY";
-export const SET_MISCELLANIES = "SET_MISCELLANIES";
-export const DELETE_MISCELLANY_ONDLTMPHASE = "DELETE_MISCELLANY_ONDLTMPHASE";
+export const DELETE_MPHASE_MISCELLANY = 'DELETE_MPHASE_MISCELLANY';
+export const CREATE_MPHASE_MISCELLANY = 'CREATE_MPHASE_MISCELLANY';
+export const UPDATE_MPHASE_MISCELLANY = 'UPDATE_MPHASE_MISCELLANY';
+export const SET_MISCELLANIES = 'SET_MISCELLANIES';
+export const DELETE_MISCELLANY_ONDLTMPHASE = 'DELETE_MISCELLANY_ONDLTMPHASE';
 
 export const fetchMiscellanies = () => {
   return async (dispatch) => {
     try {
-      const response = await fetch(
-        "https://costtracking-app.firebaseio.com/miscellanies.json"
-      );
+      const response = await fetch('http://10.0.2.2:5000/api/miscellanies');
 
       if (!response.ok) {
-        throw new Error("Something went wrong!");
+        const errorResData = await response.json();
+        throw new Error(errorResData.message);
       }
 
       const resData = await response.json();
@@ -23,9 +22,9 @@ export const fetchMiscellanies = () => {
       for (const key in resData) {
         loadedMiscellanies.push(
           new MiniPhaseMiscellaneous(
-            key,
-            resData[key].mPhaseId,
-            resData[key].projectPhaseId,
+            resData[key]._id,
+            resData[key].miniPhase,
+            resData[key].projectPhase,
             resData[key].title,
             resData[key].description,
             resData[key].totalCost
@@ -43,14 +42,18 @@ export const deleteMphaseMiscellany = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
     const response = await fetch(
-      `https://costtracking-app.firebaseio.com/miscellanies/${id}.json?auth=${token}`,
+      `http://10.0.2.2:5000/api/miscellanies/${id}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     dispatch({ type: DELETE_MPHASE_MISCELLANY, miscellanyId: id });
@@ -66,34 +69,37 @@ export const createMphaseMiscellany = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/miscellanies.json?auth=${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mPhaseId,
-          projectPhaseId,
-          title,
-          description,
-          totalCost,
-        }),
-      }
-    );
+    const response = await fetch('http://10.0.2.2:5000/api/miscellanies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        mPhaseId,
+        projectPhaseId,
+        title,
+        description,
+        totalCost,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
+    }
 
     const resData = await response.json();
 
     dispatch({
       type: CREATE_MPHASE_MISCELLANY,
       miscellanyData: {
-        id: resData.name,
-        mPhaseId,
-        projectPhaseId,
-        title,
-        description,
-        totalCost,
+        id: resData._id,
+        mPhaseId: resData.miniPhase,
+        projectPhaseId: resData.projectPhase,
+        title: resData.title,
+        description: resData.description,
+        totalCost: resData.totalCost,
       },
     });
   };
@@ -103,11 +109,12 @@ export const updateMphaseMiscellany = (id, title, description, totalCost) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
     const response = await fetch(
-      `https://costtracking-app.firebaseio.com/miscellanies/${id}.json?auth=${token}`,
+      `http://10.0.2.2:5000/api/miscellanies/${id}`,
       {
-        method: "PATCH",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           title,
@@ -118,53 +125,20 @@ export const updateMphaseMiscellany = (id, title, description, totalCost) => {
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
+
+    const resData = await response.json();
 
     dispatch({
       type: UPDATE_MPHASE_MISCELLANY,
       misId: id,
       miscellanyData: {
-        title,
-        description,
-        totalCost,
+        title: resData.title,
+        description: resData.description,
+        totalCost: resData.totalCost,
       },
-    });
-  };
-};
-
-export const deleteMiscellanyOnDltMphase = (miscellaniIds) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    miscellaniIds.forEach(async (id) => {
-      const response = await fetch(
-        `https://costtracking-app.firebaseio.com/miscellanies/${id}.json?auth=${token}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
-      }
-    });
-  };
-};
-
-export const deleteMiscellanyOnDltProject = (miscellanyIds) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    miscellanyIds.forEach(async (id) => {
-      const response = await fetch(
-        `https://costtracking-app.firebaseio.com/miscellanies/${id}.json?auth=${token}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
-      }
     });
   };
 };

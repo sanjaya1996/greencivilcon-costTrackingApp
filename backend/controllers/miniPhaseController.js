@@ -1,6 +1,9 @@
 import asyncHandler from 'express-async-handler';
 
 import { MiniPhase, SpecialMiniPhase } from '../models/miniPhase.js';
+import Labor from '../models/labor.js';
+import Material from '../models/material.js';
+import Miscellany from '../models/miscellany.js';
 
 const getMiniPhases = asyncHandler(async (req, res) => {
   const miniPhases = await MiniPhase.find({});
@@ -52,6 +55,10 @@ const deleteMiniPhase = asyncHandler(async (req, res) => {
     if (specialMphase) {
       await specialMphase.remove();
     }
+    //delete other child resources of MiniPhase
+    await Labor.deleteMany({ miniPhase: req.params.id });
+    await Material.deleteMany({ miniPhase: req.params.id });
+    await Miscellany.deleteMany({ miniPhase: req.params.id });
 
     await miniPhase.remove();
 

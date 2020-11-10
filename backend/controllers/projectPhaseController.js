@@ -1,6 +1,10 @@
 import asyncHandler from 'express-async-handler';
 
 import ProjectPhase from '../models/projectPhase.js';
+import { MiniPhase, SpecialMiniPhase } from '../models/miniPhase.js';
+import Labor from '../models/labor.js';
+import Material from '../models/material.js';
+import Miscellany from '../models/miscellany.js';
 
 const getProjectPhases = asyncHandler(async (req, res) => {
   const projectPhases = await ProjectPhase.find({});
@@ -52,6 +56,15 @@ const deleteProjectPhase = asyncHandler(async (req, res) => {
   const projectPhase = await ProjectPhase.findById(req.params.id);
 
   if (projectPhase) {
+    //First delete other Child Resources of Project Phase
+    await Labor.deleteMany({ projectPhase: req.params.id });
+    await Material.deleteMany({ projectPhase: req.params.id });
+    await Miscellany.deleteMany({ projectPhase: req.params.id });
+    await MiniPhase.deleteMany({ projectPhase: req.params.id });
+    await SpecialMiniPhase.deleteMany({
+      'miniPhase.projectPhase': req.params.id,
+    });
+
     await projectPhase.remove();
     res.json({ message: 'Project Phase Deleted' });
   } else {
