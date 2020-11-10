@@ -7,6 +7,7 @@ import { notFound, erroHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import projectPhaseRoutes from './routes/projectPhaseRoutes.js';
+import miniPhaseRoutes from './routes/miniPhaseRoutes.js';
 
 dotenv.config();
 
@@ -19,12 +20,10 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
-
 app.use('/api/users', userRoutes);
-
 app.use('/api/projects', projectRoutes);
-
 app.use('/api/projectphases', projectPhaseRoutes);
+app.use('/api/miniphases', miniPhaseRoutes);
 
 app.use(notFound);
 

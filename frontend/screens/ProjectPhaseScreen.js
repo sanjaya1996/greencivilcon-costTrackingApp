@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,24 +7,24 @@ import {
   FlatList,
   Alert,
   Platform,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useSelector, useDispatch } from "react-redux";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import * as projectPhasesActions from "../store/actions/categories";
-import * as miniPhasesActions from "../store/actions/miniPhases";
-import * as laborsActions from "../store/actions/labors";
-import * as materialsActions from "../store/actions/materials";
-import * as miscellanyActions from "../store/actions/miscellanies";
-import GraphContainer from "../components/GraphContainer";
-import HeaderButton from "../components/HeaderButton";
-import LoadingSpinner from "../components/LoadingSpinner";
-import Card from "../components/Card";
-import Colors from "../constant/Colors";
+import * as projectPhasesActions from '../store/actions/categories';
+import * as miniPhasesActions from '../store/actions/miniPhases';
+import * as laborsActions from '../store/actions/labors';
+import * as materialsActions from '../store/actions/materials';
+import * as miscellanyActions from '../store/actions/miscellanies';
+import GraphContainer from '../components/GraphContainer';
+import HeaderButton from '../components/HeaderButton';
+import LoadingSpinner from '../components/LoadingSpinner';
+import Card from '../components/Card';
+import Colors from '../constant/Colors';
 
 const ProjectPhaseScreen = (props) => {
-  const editable = props.navigation.getParam("editable");
+  const editable = props.navigation.getParam('editable');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
 
@@ -52,7 +52,7 @@ const ProjectPhaseScreen = (props) => {
   );
 
   const editMiniPhaseHandler = (id) => {
-    props.navigation.navigate("EditMiniPhase", { miniPhaseId: id });
+    props.navigation.navigate('EditMiniPhase', { miniPhaseId: id });
   };
 
   const deleteConfirmedHandler = async (
@@ -77,11 +77,11 @@ const ProjectPhaseScreen = (props) => {
   };
 
   const deleteHandler = (id, lbrIds, matIds, misclIds) => {
-    Alert.alert("Are you sure?", "Do you really want to delete this task?", [
-      { text: "No", style: "default" },
+    Alert.alert('Are you sure?', 'Do you really want to delete this task?', [
+      { text: 'No', style: 'default' },
       {
-        text: "Yes",
-        style: "destructive",
+        text: 'Yes',
+        style: 'destructive',
         onPress: () => deleteConfirmedHandler(id, lbrIds, matIds, misclIds),
       },
     ]);
@@ -117,7 +117,7 @@ const ProjectPhaseScreen = (props) => {
             {editable && (
               <View>
                 <Ionicons
-                  name="md-create"
+                  name='md-create'
                   size={24}
                   color={Colors.buttonColor}
                   onPress={() => {
@@ -129,13 +129,13 @@ const ProjectPhaseScreen = (props) => {
 
             <View>
               <Button
-                title="VIEW NOW"
+                title='VIEW NOW'
                 color={Colors.buttonColor}
                 onPress={() => {
                   props.navigation.navigate({
                     routeName: editable
-                      ? "MiniPhase"
-                      : "PreviousProjectMiniPhase",
+                      ? 'MiniPhase'
+                      : 'PreviousProjectMiniPhase',
                     params: {
                       miniPhaseId: itemData.item.id,
                       miniPhaseTitle: itemData.item.title,
@@ -150,9 +150,9 @@ const ProjectPhaseScreen = (props) => {
             {editable && (
               <View>
                 <Ionicons
-                  name="ios-remove-circle-outline"
+                  name='ios-remove-circle-outline'
                   size={24}
-                  color="red"
+                  color='red'
                   onPress={() =>
                     deleteHandler(
                       itemData.item.id,
@@ -170,7 +170,7 @@ const ProjectPhaseScreen = (props) => {
     );
   };
 
-  const projectPhaseId = props.navigation.getParam("phaseId");
+  const projectPhaseId = props.navigation.getParam('phaseId');
   const currentProjectPhase = useSelector((state) =>
     state.categories.projectCategories.find(
       (phase) => phase.id === projectPhaseId
@@ -220,22 +220,22 @@ const ProjectPhaseScreen = (props) => {
 
   const addMiniPhaseHandler = () => {
     props.navigation.navigate({
-      routeName: "EditMiniPhase",
+      routeName: 'EditMiniPhase',
       params: {
         mainPhaseId: projectPhaseId,
       },
     });
   };
 
-  if (isLoading) {
+  if (isLoading || !currentProjectPhase) {
     return <LoadingSpinner />;
   }
 
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text>An error occured!</Text>
-        <Button title="Try again" onPress={loadPhaseAndMiniPhases} />
+        <Text>{error}</Text>
+        <Button title='Try again' onPress={loadPhaseAndMiniPhases} />
       </View>
     );
   }
@@ -246,8 +246,8 @@ const ProjectPhaseScreen = (props) => {
         <>
           <View style={styles.screen}>
             <GraphContainer
-              textColor="white"
-              textBackGroundColor=""
+              textColor='white'
+              textBackGroundColor=''
               projectPhase={true}
               laborCost={currentPhaseTotalLbrCost}
               materialCost={currentPhaseTotalMatCost}
@@ -267,7 +267,7 @@ const ProjectPhaseScreen = (props) => {
 
               <View style={{ paddingLeft: 10 }}>
                 <Ionicons
-                  name={Platform.OS === "android" ? "md-add-circle" : "md-add"}
+                  name={Platform.OS === 'android' ? 'md-add-circle' : 'md-add'}
                   size={40}
                   color={Colors.buttonColor}
                   onPress={addMiniPhaseHandler}
@@ -298,18 +298,18 @@ const ProjectPhaseScreen = (props) => {
 };
 
 ProjectPhaseScreen.navigationOptions = (navigationData) => {
-  const pId = navigationData.navigation.getParam("phaseId");
-  const title = navigationData.navigation.getParam("phaseTitle");
-  const editable = navigationData.navigation.getParam("editable");
+  const pId = navigationData.navigation.getParam('phaseId');
+  const title = navigationData.navigation.getParam('phaseTitle');
+  const editable = navigationData.navigation.getParam('editable');
   if (editable) {
     return {
       headerTitle: title,
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
           <Item
-            iconName="md-create"
+            iconName='md-create'
             onPress={() => {
-              navigationData.navigation.navigate("EditProjectPhase", {
+              navigationData.navigation.navigate('EditProjectPhase', {
                 projPhaseId: pId,
               });
             }}
@@ -328,21 +328,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 15,
     paddingTop: 0,
-    shadowColor: "black",
+    shadowColor: 'black',
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 5,
     borderRadius: 10,
-    backgroundColor: "rgba(20,20,30,0.9)",
+    backgroundColor: 'rgba(20,20,30,0.9)',
   },
   centered: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   addTaskContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginLeft: 5,
     padding: 10,
   },
@@ -354,20 +354,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   title: {
-    alignItems: "center",
+    alignItems: 'center',
     padding: 10,
   },
   titleText: {
-    fontFamily: "open-sans-bold",
+    fontFamily: 'open-sans-bold',
     fontSize: 20,
   },
   buttonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     padding: 10,
   },
   fallbackText: {
-    fontFamily: "open-sans",
+    fontFamily: 'open-sans',
     fontSize: 16,
   },
 });

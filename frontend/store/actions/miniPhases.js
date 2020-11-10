@@ -1,21 +1,20 @@
-import MiniPhase from "../../models/miniPhase";
+import MiniPhase from '../../models/miniPhase';
 
-export const TOGGLE_SPECIAL = "TOGGLE-SPECIAL";
-export const DELETE_MINIPHASE = "DELETE_MINIPHASE";
-export const CREATE_MINIPHASE = "CREATE_MINIPHASE";
-export const UPDATE_MINIPHASE = "UPDATE_MINIPHASE";
-export const SET_MINIPHASES = "SET_MINIPHASES";
-export const SET_SPECIALMPHASES = "SET_SPECIALMPHASES";
+export const TOGGLE_SPECIAL = 'TOGGLE-SPECIAL';
+export const DELETE_MINIPHASE = 'DELETE_MINIPHASE';
+export const CREATE_MINIPHASE = 'CREATE_MINIPHASE';
+export const UPDATE_MINIPHASE = 'UPDATE_MINIPHASE';
+export const SET_MINIPHASES = 'SET_MINIPHASES';
+export const SET_SPECIALMPHASES = 'SET_SPECIALMPHASES';
 
 export const fetchMiniPhases = () => {
   return async (dispatch) => {
     try {
-      const response = await fetch(
-        "https://costtracking-app.firebaseio.com/miniPhases.json"
-      );
+      const response = await fetch('http://10.0.2.2:5000/api/miniphases');
 
       if (!response.ok) {
-        throw new Error("Something went wrong!");
+        const errorResData = await response.json();
+        throw new Error(errorResData.message);
       }
 
       const resData = await response.json();
@@ -23,8 +22,8 @@ export const fetchMiniPhases = () => {
       for (const key in resData) {
         loadedMiniPhases.push(
           new MiniPhase(
-            key,
-            resData[key].phaseId,
+            resData[key]._id,
+            resData[key].projectPhase,
             resData[key].title,
             resData[key].status,
             resData[key].description
@@ -41,11 +40,11 @@ export const fetchMiniPhases = () => {
 export const fetchSpecialMphases = () => {
   return async (dispatch) => {
     const response = await fetch(
-      "https://costtracking-app.firebaseio.com/specialMiniPhases.json"
+      'https://costtracking-app.firebaseio.com/specialMiniPhases.json'
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      throw new Error('Something went wrong!');
     }
 
     const resData = await response.json();
@@ -73,7 +72,7 @@ export const toggleSpecial = (miniPhase, isSpecial) => {
     const token = getState().auth.token;
     if (isSpecial) {
       const response1 = await fetch(
-        "https://costtracking-app.firebaseio.com/specialMiniPhases.json"
+        'https://costtracking-app.firebaseio.com/specialMiniPhases.json'
       );
       const resData1 = await response1.json();
       let specialMphaseKey;
@@ -86,16 +85,16 @@ export const toggleSpecial = (miniPhase, isSpecial) => {
       await fetch(
         `https://costtracking-app.firebaseio.com/specialMiniPhases/${specialMphaseKey}.json?auth=${token}`,
         {
-          method: "DELETE",
+          method: 'DELETE',
         }
       );
     } else {
       await fetch(
         `https://costtracking-app.firebaseio.com/specialMiniPhases.json?auth=${token}`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({ miniPhase }),
         }
@@ -109,14 +108,22 @@ export const deleteMiniPhase = (miniPhaseId) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
     const response = await fetch(
-      `https://costtracking-app.firebaseio.com/miniPhases/${miniPhaseId}.json?auth=${token}`,
+      `http://10.0.2.2:5000/api/miniphases/${miniPhaseId}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      const message =
+        errorResData.response && errorResData.response.data.message
+          ? errorResData.response.data.message
+          : errorResData.message;
+      throw new Error(message);
     }
 
     dispatch({ type: DELETE_MINIPHASE, mPhaseId: miniPhaseId });
@@ -126,24 +133,23 @@ export const deleteMiniPhase = (miniPhaseId) => {
 export const createMiniPhase = (phaseId, title, status, description) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/miniPhases.json?auth=${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phaseId,
-          title,
-          status,
-          description,
-        }),
-      }
-    );
+    const response = await fetch('http://10.0.2.2:5000/api/miniphases', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        phaseId,
+        title,
+        status,
+        description,
+      }),
+    });
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     const resData = await response.json();
@@ -151,11 +157,11 @@ export const createMiniPhase = (phaseId, title, status, description) => {
     dispatch({
       type: CREATE_MINIPHASE,
       miniPhaseData: {
-        id: resData.name,
-        phaseId: phaseId,
-        title: title,
-        status: status,
-        description: description,
+        id: resData._id,
+        phaseId: resData.projectPhase,
+        title: resData.title,
+        status: resData.status,
+        description: resData.description,
       },
     });
   };
@@ -164,32 +170,33 @@ export const createMiniPhase = (phaseId, title, status, description) => {
 export const updateMiniPhase = (id, title, status, description) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/miniPhases/${id}.json?auth=${token}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          status,
-          description,
-        }),
-      }
-    );
+    const response = await fetch(`http://10.0.2.2:5000/api/miniphases/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title,
+        status,
+        description,
+      }),
+    });
+
+    const resData = await response.json();
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     dispatch({
       type: UPDATE_MINIPHASE,
-      mpId: id,
+      mpId: resData._id,
       miniPhaseData: {
-        title: title,
-        status: status,
-        description: description,
+        title: resData.title,
+        status: resData.status,
+        description: resData.description,
       },
     });
   };
@@ -202,12 +209,12 @@ export const deleteMphaseOnDltProject = (mPhaseIds) => {
       const response = await fetch(
         `https://costtracking-app.firebaseio.com/miniPhases/${id}.json?auth=${token}`,
         {
-          method: "DELETE",
+          method: 'DELETE',
         }
       );
 
       if (!response.ok) {
-        throw new Error("Something went wrong!");
+        throw new Error('Something went wrong!');
       }
     });
   };
