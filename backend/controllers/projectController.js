@@ -2,6 +2,7 @@ import asyncHandler from 'express-async-handler';
 
 import { HistoryProject, Project } from '../models/project.js';
 import ProjectPhase from '../models/projectPhase.js';
+import { MiniPhase, SpecialMiniPhase } from '../models/miniPhase.js';
 
 const getProjects = asyncHandler(async (req, res) => {
   const projects = await Project.find({});
@@ -99,8 +100,24 @@ const deleteHistoryProject = asyncHandler(async (req, res) => {
   const historyProject = await HistoryProject.findById(req.params.id);
 
   if (historyProject) {
-    const projecId = historyProject.finishedProject._id;
-    await ProjectPhase.deleteMany({ project: projecId });
+    const projectId = historyProject.finishedProject._id;
+    const projectPhases = await ProjectPhase.find({ project: projectId });
+
+    //delete projectPhases
+    if (projectPhases.length > 0) {
+      let projectPhasesIds = [];
+      for (const key in projectPhases) {
+        projectPhasesIds.push(projectPhases[key]._id);
+      }
+
+      await SpecialMiniPhase.deleteMany({
+        'miniPhase.projectPhase': { $in: projectPhasesIds },
+      });
+
+      await MiniPhase.deleteMany({ projectPhase: { $in: projectPhasesIds } });
+
+      await ProjectPhase.deleteMany({ project: projectId });
+    }
 
     await historyProject.remove();
     res.json({ message: 'History Project with Phases deleted' });

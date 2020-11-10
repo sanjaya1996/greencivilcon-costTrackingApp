@@ -17,11 +17,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import HeaderButton from '../components/HeaderButton';
 import LoadingSpinner from '../components/LoadingSpinner';
 import * as projectsActions from '../store/actions/projects';
-import * as categoriesActions from '../store/actions/categories';
-import * as miniPhasesActions from '../store/actions/miniPhases';
-import * as laborsActions from '../store/actions/labors';
-import * as materialsActions from '../store/actions/materials';
-import * as miscellaniesActions from '../store/actions/miscellanies';
 import Colors from '../constant/Colors';
 
 const ProjectHistoryScreen = (props) => {
@@ -69,46 +64,14 @@ const ProjectHistoryScreen = (props) => {
 
   const userProjectClients = useSelector((state) => state.clients.clients);
 
-  const allProjectPhases = useSelector(
-    (state) => state.categories.projectCategories
-  );
-  const allMiniPhases = useSelector((state) => state.miniPhases.miniPhases);
-  const allLabors = useSelector((state) => state.labors.miniPhaseLabors);
-  const allMaterials = useSelector(
-    (state) => state.materials.miniPhaseMaterials
-  );
-  const allMiscellanies = useSelector(
-    (state) => state.miscellanies.miniPhaseMiscellanies
-  );
-
-  const deleteConfirmedHandler = async (
-    historyId
-    // phaseIds,
-    // mPIds,
-    // lbrIds,
-    // matIds,
-    // misclnyIds
-  ) => {
+  const deleteConfirmedHandler = async (historyId) => {
     setIsLoading(true);
     await dispatch(projectsActions.deleteHistoryProject(historyId));
-    // await dispatch(categoriesActions.deletePhasesOnDltProject(phaseIds));
-    // await dispatch(miniPhasesActions.deleteMphaseOnDltProject(mPIds));
-    // await dispatch(laborsActions.deleteLaborsOnDltProject(lbrIds));
-    // await dispatch(materialsActions.deleteMaterialsOnDltProject(matIds));
-    // await dispatch(
-    //   miscellaniesActions.deleteMiscellanyOnDltProject(misclnyIds)
-    // );
+
     setIsLoading(false);
   };
 
-  const deleteProjectHandler = (
-    historyId,
-    phaseIds,
-    mPIds,
-    lbrIds,
-    matIds,
-    misclnyIds
-  ) => {
+  const deleteProjectHandler = (historyId) => {
     Alert.alert(
       'Are you sure?',
       'Do you really want to delete project? Because, you will loose everything belongs to this project!',
@@ -117,15 +80,7 @@ const ProjectHistoryScreen = (props) => {
         {
           text: 'Yes',
           style: 'destructive',
-          onPress: () =>
-            deleteConfirmedHandler(
-              historyId,
-              phaseIds,
-              mPIds,
-              lbrIds,
-              matIds,
-              misclnyIds
-            ),
+          onPress: () => deleteConfirmedHandler(historyId),
         },
       ]
     );
@@ -170,43 +125,6 @@ const ProjectHistoryScreen = (props) => {
           const projectClient = userProjectClients.find(
             (client) => client.projectId === project.id
           );
-          // Getting all assets belonging to rendered project. It's purpose is to delete all assets that belong to the deleted project.
-          const phasesOfRenderedProject = allProjectPhases.filter(
-            (phase) => phase.projectId.indexOf(project._id) >= 0
-          );
-          const mPhasesOfRenderedProject = allMiniPhases.filter((miniPhase) =>
-            phasesOfRenderedProject.some(
-              (phase) => phase.id === miniPhase.phaseId
-            )
-          );
-          const laborsOfRenderedProject = allLabors.filter((labor) =>
-            phasesOfRenderedProject.some((phase) => phase.id === labor.phaseId)
-          );
-          const materialsOfRenderedProject = allMaterials.filter((material) =>
-            phasesOfRenderedProject.some(
-              (phase) => phase.id === material.phaseId
-            )
-          );
-          const miscellaniesOfRenderedProj = allMiscellanies.filter(
-            (miscellany) =>
-              phasesOfRenderedProject.some(
-                (phase) => phase.id === miscellany.phaseId
-              )
-          );
-          // Getting Ids to pass in dispatch function to perform delete operation.
-          const projectPhaseIds = phasesOfRenderedProject.map(
-            (phase) => phase.id
-          );
-          const miniPhaseIds = mPhasesOfRenderedProject.map(
-            (mPhase) => mPhase.id
-          );
-          const laborIds = laborsOfRenderedProject.map((labor) => labor.id);
-          const materialIds = materialsOfRenderedProject.map(
-            (material) => material.id
-          );
-          const miscellanyIds = miscellaniesOfRenderedProj.map(
-            (miscellany) => miscellany.id
-          );
 
           return (
             <View style={styles.gridItem}>
@@ -246,16 +164,7 @@ const ProjectHistoryScreen = (props) => {
                         name='ios-remove-circle-outline'
                         size={24}
                         color='red'
-                        onPress={() =>
-                          deleteProjectHandler(
-                            itemData.item._id,
-                            projectPhaseIds,
-                            miniPhaseIds,
-                            laborIds,
-                            materialIds,
-                            miscellanyIds
-                          )
-                        }
+                        onPress={() => deleteProjectHandler(itemData.item._id)}
                       />
                     </View>
                   </View>

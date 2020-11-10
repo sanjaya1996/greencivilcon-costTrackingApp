@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler';
 
-import MiniPhase from '../models/miniPhase.js';
+import { MiniPhase, SpecialMiniPhase } from '../models/miniPhase.js';
 
 const getMiniPhases = asyncHandler(async (req, res) => {
   const miniPhases = await MiniPhase.find({});
@@ -46,6 +46,13 @@ const deleteMiniPhase = asyncHandler(async (req, res) => {
   const miniPhase = await MiniPhase.findById(req.params.id);
 
   if (miniPhase) {
+    const specialMphase = await SpecialMiniPhase.findOne({
+      'miniPhase._id': req.params.id,
+    });
+    if (specialMphase) {
+      await specialMphase.remove();
+    }
+
     await miniPhase.remove();
 
     res.json({ message: 'MiniPhase removed' });
@@ -55,4 +62,44 @@ const deleteMiniPhase = asyncHandler(async (req, res) => {
   }
 });
 
-export { getMiniPhases, createMiniPhase, updateMiniPhase, deleteMiniPhase };
+//Special MiniPhases
+
+const getSpecialMphases = asyncHandler(async (req, res) => {
+  const specialMphases = await SpecialMiniPhase.find({});
+
+  res.json(specialMphases);
+});
+
+const toogleSpecialMphase = asyncHandler(async (req, res) => {
+  const miniPhase = await MiniPhase.findById(req.params.mPhaseId);
+
+  if (miniPhase) {
+    const specialMphase = await SpecialMiniPhase.findOne({
+      'miniPhase._id': req.params.mPhaseId,
+    });
+
+    if (specialMphase) {
+      await specialMphase.remove();
+      res.json({ message: 'Removed from Specials' });
+    } else {
+      const newSpecialMPhase = new SpecialMiniPhase({
+        miniPhase,
+      });
+      const createdSpecialMphase = await newSpecialMPhase.save();
+
+      res.status(201).json(createdSpecialMphase);
+    }
+  } else {
+    res.status(404);
+    throw new Error('Project MiniPhase not found');
+  }
+});
+
+export {
+  getMiniPhases,
+  createMiniPhase,
+  updateMiniPhase,
+  deleteMiniPhase,
+  getSpecialMphases,
+  toogleSpecialMphase,
+};

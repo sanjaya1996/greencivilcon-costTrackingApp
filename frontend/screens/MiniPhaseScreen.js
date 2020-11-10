@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -6,21 +6,21 @@ import {
   TouchableOpacity,
   ScrollView,
   Button,
-} from "react-native";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import { useSelector, useDispatch } from "react-redux";
+} from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { useSelector, useDispatch } from 'react-redux';
 
-import HeaderButton from "../components/HeaderButton";
-import * as miniPhasesActions from "../store/actions/miniPhases";
-import Card from "../components/Card";
-import Colors from "../constant/Colors";
+import HeaderButton from '../components/HeaderButton';
+import * as miniPhasesActions from '../store/actions/miniPhases';
+import Card from '../components/Card';
+import Colors from '../constant/Colors';
 
 const MiniPhaseScreen = (props) => {
   const [error, setError] = useState();
 
-  const passedMiniPhaseId = props.navigation.getParam("miniPhaseId");
-  const passedPhaseId = props.navigation.getParam("projectPhaseId");
-  const editable = props.navigation.getParam("editable");
+  const passedMiniPhaseId = props.navigation.getParam('miniPhaseId');
+  const passedPhaseId = props.navigation.getParam('projectPhaseId');
+  const editable = props.navigation.getParam('editable');
 
   const renderedMiniPhase = useSelector((state) =>
     state.miniPhases.miniPhases.find(
@@ -60,10 +60,8 @@ const MiniPhaseScreen = (props) => {
   }, [currentPhaseIsSpecial, loadSpecialMiniPhases]);
 
   const toggleSpecialHandler = useCallback(async () => {
-    await dispatch(
-      miniPhasesActions.toggleSpecial(renderedMiniPhase, currentPhaseIsSpecial)
-    );
-  }, [currentPhaseIsSpecial]);
+    await dispatch(miniPhasesActions.toggleSpecial(passedMiniPhaseId));
+  }, [dispatch, passedMiniPhaseId]);
 
   useEffect(() => {
     props.navigation.setParams({ toggleSpcl: toggleSpecialHandler });
@@ -93,7 +91,7 @@ const MiniPhaseScreen = (props) => {
       <View style={styles.centered}>
         <Text>An error occured!</Text>
         <Button
-          title="Try again"
+          title='Try again'
           onPress={loadSpecialMiniPhases}
           color={Colors.buttonColor}
         />
@@ -104,7 +102,7 @@ const MiniPhaseScreen = (props) => {
   return (
     <ScrollView>
       <View style={styles.title}>
-        <Text style={{ ...styles.labelText, color: "black" }}>
+        <Text style={{ ...styles.labelText, color: 'black' }}>
           $$$ COST TRACKING $$$
         </Text>
       </View>
@@ -112,14 +110,14 @@ const MiniPhaseScreen = (props) => {
         <Card style={{ ...styles.cardContainer, margin: 10 }}>
           <View style={styles.cardHeader}>
             <View style={styles.titleContainer}>
-              <Text style={{ ...styles.labelText, color: "black" }}>
+              <Text style={{ ...styles.labelText, color: 'black' }}>
                 Total Cost
               </Text>
             </View>
           </View>
           <View style={styles.costContainer}>
             <Text style={styles.value}>
-              $ {mPhaseTotalBudgetSpent.toFixed(2)}{" "}
+              $ {mPhaseTotalBudgetSpent.toFixed(2)}{' '}
             </Text>
           </View>
         </Card>
@@ -130,8 +128,8 @@ const MiniPhaseScreen = (props) => {
               onPress={() => {
                 props.navigation.navigate({
                   routeName: editable
-                    ? "MiniPhaseLabors"
-                    : "PreviousProjectMphaseLabor",
+                    ? 'MiniPhaseLabors'
+                    : 'PreviousProjectMphaseLabor',
                   params: {
                     mPhaseId: passedMiniPhaseId,
                     projectPhaseId: passedPhaseId,
@@ -145,7 +143,7 @@ const MiniPhaseScreen = (props) => {
           </View>
           <View style={styles.costContainer}>
             <Text style={styles.value}>
-              $ {mPhaseTotalLaborCost.toFixed(2)}{" "}
+              $ {mPhaseTotalLaborCost.toFixed(2)}{' '}
             </Text>
           </View>
         </Card>
@@ -157,8 +155,8 @@ const MiniPhaseScreen = (props) => {
               onPress={() => {
                 props.navigation.navigate({
                   routeName: editable
-                    ? "MiniPhaseMaterials"
-                    : "PreviousProjectMphaseMaterial",
+                    ? 'MiniPhaseMaterials'
+                    : 'PreviousProjectMphaseMaterial',
                   params: {
                     mPhaseId: passedMiniPhaseId,
                     projectPhaseId: passedPhaseId,
@@ -184,8 +182,8 @@ const MiniPhaseScreen = (props) => {
               onPress={() => {
                 props.navigation.navigate({
                   routeName: editable
-                    ? "MphaseMiscellaneous"
-                    : "PreviousProjectMphaseOther",
+                    ? 'MphaseMiscellaneous'
+                    : 'PreviousProjectMphaseOther',
                   params: {
                     mPhaseId: passedMiniPhaseId,
                     projectPhaseId: passedPhaseId,
@@ -199,7 +197,7 @@ const MiniPhaseScreen = (props) => {
           </View>
           <View style={styles.costContainer}>
             <Text style={styles.value}>
-              $ {mPhaseTotalOtherCost.toFixed(2)}{" "}
+              $ {mPhaseTotalOtherCost.toFixed(2)}{' '}
             </Text>
           </View>
         </Card>
@@ -213,19 +211,19 @@ MiniPhaseScreen.navigationOptions = (navigationData) => {
   // const selectedMiniPhase = MINIPHASES.find(
   //   (miniphase) => miniphase.id === passedMiniPhaseId
   // );
-  const miniPhaseTitle = navigationData.navigation.getParam("miniPhaseTitle");
-  const toggleSpecial = navigationData.navigation.getParam("toggleSpcl");
-  const isSpecial = navigationData.navigation.getParam("isSpcl");
-  const editable = navigationData.navigation.getParam("editable") || false;
+  const miniPhaseTitle = navigationData.navigation.getParam('miniPhaseTitle');
+  const toggleSpecial = navigationData.navigation.getParam('toggleSpcl');
+  const isSpecial = navigationData.navigation.getParam('isSpcl');
+  const editable = navigationData.navigation.getParam('editable') || false;
   if (editable) {
     return {
       headerTitle: miniPhaseTitle,
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
           <Item
-            title="Favorite"
-            iconName={isSpecial ? "ios-star" : "ios-star-outline"}
-            color="white"
+            title='Favorite'
+            iconName={isSpecial ? 'ios-star' : 'ios-star-outline'}
+            color='white'
             onPress={toggleSpecial}
           />
         </HeaderButtons>
@@ -237,23 +235,23 @@ MiniPhaseScreen.navigationOptions = (navigationData) => {
 
 const styles = StyleSheet.create({
   title: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginVertical: 10,
   },
   cardContainer: {
-    margin: "10%",
-    marginVertical: "5%",
+    margin: '10%',
+    marginVertical: '5%',
     padding: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   cardHeader: {
-    width: "90%",
+    width: '90%',
     borderBottomWidth: 0.7,
-    borderBottomColor: "#ccc",
+    borderBottomColor: '#ccc',
   },
   titleContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginVertical: 15,
   },
   costContainer: {
@@ -261,11 +259,11 @@ const styles = StyleSheet.create({
   },
   labelText: {
     color: Colors.buttonColor,
-    fontFamily: "open-sans-bold",
+    fontFamily: 'open-sans-bold',
     fontSize: 18,
   },
   value: {
-    fontFamily: "open-sans",
+    fontFamily: 'open-sans',
     fontSize: 18,
   },
 });

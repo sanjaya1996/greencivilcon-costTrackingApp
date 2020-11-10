@@ -20,6 +20,14 @@ const miniPhaseSchema = mongoose.Schema({
   },
 });
 
-const MiniPhase = mongoose.model('MiniPhase', miniPhaseSchema);
+const specialMphaseSchema = mongoose.Schema({
+  miniPhase: miniPhaseSchema,
+});
 
-export default MiniPhase;
+const MiniPhase = mongoose.model('MiniPhase', miniPhaseSchema);
+const SpecialMiniPhase = mongoose.model(
+  'SpecialMiniPhase',
+  specialMphaseSchema
+);
+
+export { MiniPhase, SpecialMiniPhase };

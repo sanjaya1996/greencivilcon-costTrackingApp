@@ -40,20 +40,22 @@ export const fetchMiniPhases = () => {
 export const fetchSpecialMphases = () => {
   return async (dispatch) => {
     const response = await fetch(
-      'https://costtracking-app.firebaseio.com/specialMiniPhases.json'
+      'http://10.0.2.2:5000/api/miniphases/specials'
     );
 
     if (!response.ok) {
-      throw new Error('Something went wrong!');
+      const errorResData = await response.json();
+      throw new Error(errorResData.message);
     }
 
     const resData = await response.json();
-    const loadedSpecialsmPhases = [];
+    const loadedSpecialmPhases = [];
+
     for (const key in resData) {
-      loadedSpecialsmPhases.push(
+      loadedSpecialmPhases.push(
         new MiniPhase(
-          resData[key].miniPhase.id,
-          resData[key].miniPhase.phaseId,
+          resData[key].miniPhase._id,
+          resData[key].miniPhase.projectPhase,
           resData[key].miniPhase.title,
           resData[key].miniPhase.status,
           resData[key].miniPhase.description
@@ -62,45 +64,34 @@ export const fetchSpecialMphases = () => {
     }
     dispatch({
       type: SET_SPECIALMPHASES,
-      specialMiniPhases: loadedSpecialsmPhases,
+      specialMiniPhases: loadedSpecialmPhases,
     });
   };
 };
 
-export const toggleSpecial = (miniPhase, isSpecial) => {
+export const toggleSpecial = (miniPhaseId) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    if (isSpecial) {
-      const response1 = await fetch(
-        'https://costtracking-app.firebaseio.com/specialMiniPhases.json'
-      );
-      const resData1 = await response1.json();
-      let specialMphaseKey;
-      for (const key in resData1) {
-        if (resData1[key].miniPhase.id === miniPhase.id) {
-          specialMphaseKey = key;
-        }
-        break;
+
+    const response = await fetch(
+      `http://10.0.2.2:5000/api/miniphases/specials/${miniPhaseId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-      await fetch(
-        `https://costtracking-app.firebaseio.com/specialMiniPhases/${specialMphaseKey}.json?auth=${token}`,
-        {
-          method: 'DELETE',
-        }
-      );
-    } else {
-      await fetch(
-        `https://costtracking-app.firebaseio.com/specialMiniPhases.json?auth=${token}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ miniPhase }),
-        }
-      );
+    );
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      const message =
+        errorResData.response && errorResData.response.data.message
+          ? errorResData.response.data.message
+          : errorResData.message;
+      throw new Error(message);
     }
-    dispatch({ type: TOGGLE_SPECIAL, miniPhaseId: miniPhase.id });
+
+    dispatch({ type: TOGGLE_SPECIAL, miniPhaseId });
   };
 };
 
@@ -198,24 +189,6 @@ export const updateMiniPhase = (id, title, status, description) => {
         status: resData.status,
         description: resData.description,
       },
-    });
-  };
-};
-
-export const deleteMphaseOnDltProject = (mPhaseIds) => {
-  return async (dispatch, getState) => {
-    const token = getState().auth.token;
-    mPhaseIds.forEach(async (id) => {
-      const response = await fetch(
-        `https://costtracking-app.firebaseio.com/miniPhases/${id}.json?auth=${token}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Something went wrong!');
-      }
     });
   };
 };
