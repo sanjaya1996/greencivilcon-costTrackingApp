@@ -1,11 +1,10 @@
-import { CLIENTS } from "../../data/stakeholders";
 import {
   UPDATE_CLIENT,
   DELETE_CLIENT,
   CREATE_CLIENT,
   SET_CLIENT,
-} from "../actions/clients";
-import Client from "../../models/client";
+} from '../actions/clients';
+import Client from '../../models/client';
 
 const initialState = {
   clients: [],

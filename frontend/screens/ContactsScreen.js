@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -9,13 +9,13 @@ import {
   Platform,
   Alert,
   Button,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useSelector, useDispatch } from "react-redux";
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
 
-import Colors from "../constant/Colors";
-import * as managersActions from "../store/actions/managers";
-import LoadingSpinner from "../components/LoadingSpinner";
+import Colors from '../constant/Colors';
+import * as managersActions from '../store/actions/managers';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const ContactsScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,7 @@ const ContactsScreen = (props) => {
   const [error, setError] = useState();
 
   const [isSearching, setIsSearching] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
 
   const dispatch = useDispatch();
 
@@ -92,25 +92,25 @@ const ContactsScreen = (props) => {
   }
 
   if (Managers.length === 0) {
-    Managers = ["Not found!"];
+    Managers = ['Not found!'];
   }
   if (Clients.length === 0) {
-    Clients = ["Not found!"];
+    Clients = ['Not found!'];
   }
   if (Labors.length === 0) {
-    Labors = ["Not found!"];
+    Labors = ['Not found!'];
   }
   const DATA = [
     {
-      title: "Manager",
+      title: 'Manager',
       data: Managers,
     },
     {
-      title: "Clients",
+      title: 'Clients',
       data: Clients,
     },
     {
-      title: "Labors",
+      title: 'Labors',
       data: Labors,
     },
   ];
@@ -121,15 +121,15 @@ const ContactsScreen = (props) => {
         <View>
           <Text style={styles.headerTitle}>{itemData.title}</Text>
         </View>
-        {itemData.title === "Manager" && (
+        {itemData.title === 'Manager' && (
           <View style={{ paddingRight: 5 }}>
             <Ionicons
-              name={Platform.OS === "ios" ? "ios-add" : "md-add"}
+              name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
               size={25}
               color={Colors.primaryColor}
               onPress={() =>
                 props.navigation.navigate({
-                  routeName: "EditPeople",
+                  routeName: 'EditPeople',
                 })
               }
             />
@@ -154,13 +154,13 @@ const ContactsScreen = (props) => {
     };
     const deleteManagerHandler = (id) => {
       Alert.alert(
-        "Are you sure?",
-        "Do you really want to delete this manager?",
+        'Are you sure?',
+        'Do you really want to delete this manager?',
         [
-          { text: "No", style: "default" },
+          { text: 'No', style: 'default' },
           {
-            title: "Yes",
-            style: "destructive",
+            title: 'Yes',
+            style: 'destructive',
             onPress: () => deleteConfirmHandler(id),
           },
         ]
@@ -176,7 +176,7 @@ const ContactsScreen = (props) => {
             <Text style={styles.itemTitle}>{itemData.item.firstName}</Text>
           </TouchableOpacity>
         ) : (
-          <Text style={{ color: "#6A6A67" }}>{itemData.item}</Text>
+          <Text style={{ color: '#6A6A67' }}>{itemData.item}</Text>
         )}
 
         {isPressed && (
@@ -189,19 +189,19 @@ const ContactsScreen = (props) => {
               <Text style={styles.label}>email:</Text>
               <Text style={styles.value}>{itemData.item.email}</Text>
             </View>
-            {itemData.section.title === "Manager" ? (
+            {itemData.section.title === 'Manager' ? (
               <View style={styles.buttonsContainer}>
                 <View>
                   {isDeleting ? (
-                    <LoadingSpinner size="small" />
+                    <LoadingSpinner size='small' />
                   ) : (
                     <Ionicons
-                      name="md-create"
+                      name='md-create'
                       size={24}
                       color={Colors.buttonColor}
                       onPress={() => {
                         props.navigation.navigate({
-                          routeName: "EditPeople",
+                          routeName: 'EditPeople',
                           params: { managerId: itemData.item.id },
                         });
                       }}
@@ -210,9 +210,9 @@ const ContactsScreen = (props) => {
                 </View>
                 <View>
                   <Ionicons
-                    name="ios-remove-circle-outline"
+                    name='ios-remove-circle-outline'
                     size={24}
-                    color="red"
+                    color='red'
                     onPress={() => {
                       deleteManagerHandler(itemData.item.id);
                     }}
@@ -238,7 +238,7 @@ const ContactsScreen = (props) => {
       <View style={styles.ceneterd}>
         <Text>An error occured!</Text>
         <Button
-          title="Try again"
+          title='Try again'
           color={Colors.buttonColor}
           onPress={loadManagers}
         />
@@ -254,14 +254,14 @@ const ContactsScreen = (props) => {
       <View style={styles.searchSection}>
         <Ionicons
           style={styles.searchIcon}
-          name={Platform.OS === "android" ? "md-search" : "ios-search"}
+          name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
           size={24}
-          color="black"
+          color='black'
         />
 
         <TextInput
-          placeholder="Search"
-          placeholderTextColor="#6A6A67"
+          placeholder='Search'
+          placeholderTextColor='#6A6A67'
           style={styles.input}
           onChangeText={textChangeHandler}
           value={searchText}
@@ -282,7 +282,7 @@ const ContactsScreen = (props) => {
 };
 
 ContactsScreen.navigationOptions = {
-  headerTitle: "Your Contacts",
+  headerTitle: 'Your Contacts',
 };
 
 const styles = StyleSheet.create({
@@ -292,64 +292,64 @@ const styles = StyleSheet.create({
   },
   ceneterd: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchSection: {
     marginBottom: 20,
-    flexDirection: "row",
-    backgroundColor: "rgba(220,220,220,1.0)",
+    flexDirection: 'row',
+    backgroundColor: 'rgba(220,220,220,1.0)',
     borderRadius: 10,
   },
   searchIcon: {
     padding: 10,
   },
   input: {
-    width: "80%",
+    width: '80%',
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 0,
-    color: "black",
-    fontFamily: "open-sans",
+    color: 'black',
+    fontFamily: 'open-sans',
   },
   sectionHeader: {
     padding: 5,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#ccc",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#ccc',
   },
   headerTitle: {
     fontSize: 14,
-    fontFamily: "open-sans-bold",
+    fontFamily: 'open-sans-bold',
   },
   item: {
     padding: 8,
     borderBottomWidth: 0.7,
-    borderBottomColor: "#ccc",
+    borderBottomColor: '#ccc',
   },
   itemTitle: {
     fontSize: 18,
-    fontFamily: "open-sans",
+    fontFamily: 'open-sans',
   },
   contactDetails: {
     padding: 10,
   },
   phoneOrEmail: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingBottom: 5,
   },
   label: {
-    fontFamily: "open-sans",
+    fontFamily: 'open-sans',
   },
   value: {
-    fontFamily: "open-sans",
-    color: "#1e90ff",
+    fontFamily: 'open-sans',
+    color: '#1e90ff',
     paddingLeft: 4,
   },
   buttonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 5,
   },
 });

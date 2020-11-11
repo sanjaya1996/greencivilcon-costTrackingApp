@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback, useEffect, useState } from "react";
+import React, { useReducer, useCallback, useEffect, useState } from 'react';
 import {
   View,
   KeyboardAvoidingView,
@@ -7,17 +7,17 @@ import {
   StyleSheet,
   Platform,
   Alert,
-} from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import Input from "../../components/Input";
-import HeaderButton from "../../components/HeaderButton";
-import * as clientActions from "../../store/actions/clients";
-import * as managersActions from "../../store/actions/managers";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import Input from '../../components/Input';
+import HeaderButton from '../../components/HeaderButton';
+import * as clientActions from '../../store/actions/clients';
+import * as managersActions from '../../store/actions/managers';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
-const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
+const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
 const formReducer = (state, action) => {
   if (action.type === FORM_INPUT_UPDATE) {
@@ -46,9 +46,9 @@ const EditPeopleScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
 
-  const clientId = props.navigation.getParam("clientId");
-  const managerId = props.navigation.getParam("managerId");
-  const clientProjectId = props.navigation.getParam("projectId");
+  const clientId = props.navigation.getParam('clientId');
+  const managerId = props.navigation.getParam('managerId');
+  const clientProjectId = props.navigation.getParam('projectId');
   const editedClient = useSelector((state) =>
     state.clients.clients.find((client) => client.id === clientId)
   );
@@ -66,10 +66,10 @@ const EditPeopleScreen = (props) => {
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
-      fName: editedPeople ? editedPeople.firstName : "",
-      lName: editedPeople ? editedPeople.lastName : "",
-      email: editedPeople ? editedPeople.email : "",
-      phone: editedPeople ? editedPeople.phoneNumber : "",
+      fName: editedPeople ? editedPeople.firstName : '',
+      lName: editedPeople ? editedPeople.lastName : '',
+      email: editedPeople ? editedPeople.email : '',
+      phone: editedPeople ? editedPeople.phoneNumber : '',
     },
     inputValidities: {
       fName: editedPeople ? true : false,
@@ -82,14 +82,14 @@ const EditPeopleScreen = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert("An error occured", error, [{ text: "Okay" }]);
+      Alert.alert('An error occured', error, [{ text: 'Okay' }]);
     }
   }, [error]);
 
   const submitHandler = useCallback(async () => {
     if (!formState.formIsValid) {
-      Alert.alert("Wrong input!", "Please check the errors in the form!", [
-        { text: "Okay" },
+      Alert.alert('Wrong input!', 'Please check the errors in the form!', [
+        { text: 'Okay' },
       ]);
       return;
     }
@@ -166,55 +166,55 @@ const EditPeopleScreen = (props) => {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={100}
     >
       <ScrollView>
         <View style={styles.form}>
           <Input
-            id="fName"
-            label="First Name"
-            errorText="Please enter a valid first name!"
-            autoCapitalize={"words"}
+            id='fName'
+            label='First Name'
+            errorText='Please enter a valid first name!'
+            autoCapitalize={'words'}
             autoCorrect
-            returnKeyType={"next"}
+            returnKeyType={'next'}
             onInputChange={inputChangeHandler}
-            initialValue={editedPeople ? editedPeople.firstName : ""}
+            initialValue={editedPeople ? editedPeople.firstName : ''}
             initiallyValid={!!editedPeople}
             required
           />
           <Input
-            id="lName"
-            label="Last Name"
-            errorText="Please enter a valid first name!"
-            autoCapitalize={"words"}
+            id='lName'
+            label='Last Name'
+            errorText='Please enter a valid first name!'
+            autoCapitalize={'words'}
             autoCorrect
-            returnKeyType={"next"}
+            returnKeyType={'next'}
             onInputChange={inputChangeHandler}
-            initialValue={editedPeople ? editedPeople.lastName : ""}
+            initialValue={editedPeople ? editedPeople.lastName : ''}
             initiallyValid={!!editedPeople}
             required
           />
           <Input
-            id="email"
-            label="E-mail"
-            errorText="Please enter a valid email address!"
-            keyboardType={"email-address"}
-            autoCapitalize={"none"}
-            returnKeyType={"next"}
+            id='email'
+            label='E-mail'
+            errorText='Please enter a valid email address!'
+            keyboardType={'email-address'}
+            autoCapitalize={'none'}
+            returnKeyType={'next'}
             onInputChange={inputChangeHandler}
-            initialValue={editedPeople ? editedPeople.email : ""}
+            initialValue={editedPeople ? editedPeople.email : ''}
             initiallyValid={!!editedPeople}
             required
             email
           />
           <Input
-            id="phone"
-            label="Phone"
-            errorText="Please enter a valid phone number!"
-            keyboardType={"phone-pad"}
+            id='phone'
+            label='Phone'
+            errorText='Please enter a valid phone number!'
+            keyboardType={'phone-pad'}
             onInputChange={inputChangeHandler}
-            initialValue={editedPeople ? editedPeople.phoneNumber : ""}
+            initialValue={editedPeople ? editedPeople.phoneNumber : ''}
             initiallyValid={!!editedPeople}
             required
           />
@@ -225,14 +225,14 @@ const EditPeopleScreen = (props) => {
 };
 
 EditPeopleScreen.navigationOptions = (navData) => {
-  const submitFn = navData.navigation.getParam("submit");
+  const submitFn = navData.navigation.getParam('submit');
   return {
-    headerTitle: "Edit Client",
+    headerTitle: 'Edit Client',
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
-          title="Save"
-          iconName="ios-checkmark-circle-outline"
+          title='Save'
+          iconName='ios-checkmark-circle-outline'
           onPress={submitFn}
         />
       </HeaderButtons>

@@ -11,6 +11,7 @@ import miniPhaseRoutes from './routes/miniPhaseRoutes.js';
 import laborRoutes from './routes/laborRoutes.js';
 import materialRoutes from './routes/materialRoutes.js';
 import miscellanyRoutes from './routes/miscellanyRoutes.js';
+import clientRoutes from './routes/clientRoutes.js';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/api/miniphases', miniPhaseRoutes);
 app.use('/api/labors', laborRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/miscellanies', miscellanyRoutes);
+app.use('/api/clients', clientRoutes);
 
 app.use(notFound);
 
