@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   ScrollView,
@@ -8,25 +8,25 @@ import {
   Dimensions,
   Platform,
   Button,
-} from "react-native";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
-import { useSelector, useDispatch } from "react-redux";
+} from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
 
-import HeaderButton from "../components/HeaderButton";
-import Colors from "../constant/Colors";
-import Card from "../components/Card";
-import * as supervisorsActions from "../store/actions/supervisors";
-import LoadingSpinner from "../components/LoadingSpinner";
+import HeaderButton from '../components/HeaderButton';
+import Colors from '../constant/Colors';
+import Card from '../components/Card';
+import * as supervisorsActions from '../store/actions/supervisors';
+import LoadingSpinner from '../components/LoadingSpinner';
 
-const emptyProfileImage = "https://pbs.twimg.com/media/DKpeGz2X0AAXN9T.jpg";
+const emptyProfileImage = 'https://pbs.twimg.com/media/DKpeGz2X0AAXN9T.jpg';
 
 const UserProfileScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
 
-  const user = useSelector((state) => state.supervisors.user) || {};
+  const user = useSelector((state) => state.supervisors.user);
 
   const dispatch = useDispatch();
 
@@ -61,7 +61,7 @@ const UserProfileScreen = (props) => {
       <View style={styles.centered}>
         <Text>An error occured!</Text>
         <Button
-          title="Try Agian"
+          title='Try Agian'
           color={Colors.buttonColor}
           onPress={loadSupervisorProfile}
         />
@@ -72,28 +72,28 @@ const UserProfileScreen = (props) => {
   return (
     <View style={styles.screen}>
       <LinearGradient
-        colors={[Colors.primaryColor, "#8f66ed"]}
+        colors={[Colors.primaryColor, '#8f66ed']}
         style={styles.gradient}
       >
         <View style={styles.editProfile}>
-          {Object.keys(user).length === 0 ? (
-            <Ionicons
-              name={Platform.OS === "ios" ? "ios-person-add" : "md-person-add"}
-              size={30}
-              color="white"
-              onPress={() => props.navigation.navigate("EditProfile")}
-            />
-          ) : (
+          {user ? (
             <FontAwesome5
-              name="user-edit"
+              name='user-edit'
               size={30}
-              color="white"
+              color='white'
               onPress={() =>
                 props.navigation.navigate({
-                  routeName: "EditProfile",
-                  params: { superId: user.id },
+                  routeName: 'EditProfile',
+                  params: { profileId: user._id },
                 })
               }
+            />
+          ) : (
+            <Ionicons
+              name={Platform.OS === 'ios' ? 'ios-person-add' : 'md-person-add'}
+              size={30}
+              color='white'
+              onPress={() => props.navigation.navigate('EditProfile')}
             />
           )}
         </View>
@@ -101,42 +101,44 @@ const UserProfileScreen = (props) => {
       <View style={styles.imageContainer}>
         <Image
           source={{
-            uri: user.profilePic ? user.profilePic : emptyProfileImage,
+            uri: user
+              ? user.profilePic
+                ? user.profilePic
+                : emptyProfileImage
+              : emptyProfileImage,
           }}
           style={styles.image}
         />
       </View>
       <View style={styles.nameAndProfession}>
-        {user.firstName && (
-          <Text style={styles.userNameText}>
-            {user.firstName + " " + (user.lastName || "")}
-          </Text>
-        )}
-        <Text style={styles.defaultText}>{user.jobTitle}</Text>
+        <Text style={styles.userNameText}>
+          {user ? user.fName + ' ' + (user.lName || '') : 'Your Name ?'}
+        </Text>
+        <Text style={styles.defaultText}>{user ? user.jobTitle : 'Job ?'}</Text>
       </View>
       <View style={styles.detailsContainer}>
         <Card style={styles.detail}>
-          <View style={{ justifyContent: "center" }}>
+          <View style={{ justifyContent: 'center' }}>
             <Ionicons
-              name={Platform.OS === "android" ? "md-mail" : "ios-mail"}
+              name={Platform.OS === 'android' ? 'md-mail' : 'ios-mail'}
               size={24}
               color={Colors.primaryColor}
             />
           </View>
           <Text style={{ ...styles.defaultText, marginLeft: 5 }}>
-            {user.email}
+            {user ? user.email : 'Email ?'}
           </Text>
         </Card>
         <Card style={styles.detail}>
-          <View style={{ justifyContent: "center" }}>
+          <View style={{ justifyContent: 'center' }}>
             <Ionicons
-              name={Platform.OS === "android" ? "md-call" : "ios-call"}
+              name={Platform.OS === 'android' ? 'md-call' : 'ios-call'}
               size={24}
               color={Colors.primaryColor}
             />
           </View>
           <Text style={{ ...styles.defaultText, marginLeft: 5 }}>
-            {user.phoneNumber}
+            {user ? user.phone : 'Phone ?'}
           </Text>
         </Card>
       </View>
@@ -146,13 +148,13 @@ const UserProfileScreen = (props) => {
 
 UserProfileScreen.navigationOptions = (navData) => {
   return {
-    headerTitle: "Your Profile",
+    headerTitle: 'Your Profile',
     headerLeft: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
-          title="Menu"
-          iconName="ios-menu"
-          color="white"
+          title='Menu'
+          iconName='ios-menu'
+          color='white'
           onPress={() => {
             navData.navigation.toggleDrawer();
           }}
@@ -165,39 +167,39 @@ UserProfileScreen.navigationOptions = (navData) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    height: "100%",
+    height: '100%',
   },
   centered: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   gradient: {
-    height: "20%",
+    height: '20%',
   },
   editProfile: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     margin: 10,
   },
   imageContainer: {
-    alignItems: "center",
-    marginTop: "-12%",
+    alignItems: 'center',
+    marginTop: '-12%',
   },
   image: {
-    width: Dimensions.get("window").width * 0.32,
-    height: Dimensions.get("window").width * 0.32,
-    borderRadius: (Dimensions.get("window").width * 0.32) / 2,
+    width: Dimensions.get('window').width * 0.32,
+    height: Dimensions.get('window').width * 0.32,
+    borderRadius: (Dimensions.get('window').width * 0.32) / 2,
   },
   nameAndProfession: {
-    alignItems: "center",
+    alignItems: 'center',
     marginVertical: 10,
   },
   userNameText: {
-    fontFamily: "open-sans-bold",
+    fontFamily: 'open-sans-bold',
     fontSize: 20,
   },
   defaultText: {
-    fontFamily: "open-sans",
+    fontFamily: 'open-sans',
     fontSize: 16,
     padding: 5,
   },
@@ -206,7 +208,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   detail: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 15,
   },
 });

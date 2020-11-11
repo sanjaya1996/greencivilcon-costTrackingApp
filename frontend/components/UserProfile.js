@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
@@ -6,14 +6,14 @@ import {
   Image,
   Platform,
   ImageBackground,
-} from "react-native";
-import Colors from "../constant/Colors";
-import { useSelector } from "react-redux";
+} from 'react-native';
+import Colors from '../constant/Colors';
+import { useSelector } from 'react-redux';
 
 const image = {
-  uri: "https://www.freegreatpicture.com/files/147/5281-background-color.jpg",
+  uri: 'https://www.freegreatpicture.com/files/147/5281-background-color.jpg',
 };
-const emptyProfile = "https://pbs.twimg.com/media/DKpeGz2X0AAXN9T.jpg";
+const emptyProfile = 'https://pbs.twimg.com/media/DKpeGz2X0AAXN9T.jpg';
 
 const UserProfile = (props) => {
   const user = useSelector((state) => state.supervisors.user);
@@ -24,13 +24,17 @@ const UserProfile = (props) => {
           <Image
             style={styles.image}
             source={{
-              uri: user.profilePic ? user.profilePic : emptyProfile,
+              uri: user
+                ? user.profilePic
+                  ? user.profilePic
+                  : emptyProfile
+                : emptyProfile,
             }}
           />
         </View>
-        {Object.keys(user).length > 0 && (
+        {user && (
           <Text style={styles.profileText}>
-            {user.firstName + " " + (user.lastName || "")}
+            {user.fName + ' ' + (user.lName || '')}
           </Text>
         )}
       </View>
@@ -43,19 +47,19 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   backImage: {
-    resizeMode: "cover",
+    resizeMode: 'cover',
   },
   image: {
     width: 80,
     height: 80,
     borderRadius: 40,
     borderWidth: 3,
-    borderColor: "white",
+    borderColor: 'white',
   },
   profileText: {
-    color: "white",
+    color: 'white',
     fontSize: 20,
-    fontFamily: "open-sans-bold",
+    fontFamily: 'open-sans-bold',
     padding: 5,
   },
 });

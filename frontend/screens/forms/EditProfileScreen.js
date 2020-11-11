@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback, useEffect, useState } from "react";
+import React, { useReducer, useCallback, useEffect, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -7,16 +7,16 @@ import {
   StyleSheet,
   Alert,
   Platform,
-} from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
+} from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
-import HeaderButton from "../../components/HeaderButton";
-import Input from "../../components/Input";
-import * as supervisorsActions from "../../store/actions/supervisors";
-import ImagePicker from "../../components/ImagePicker";
+import HeaderButton from '../../components/HeaderButton';
+import Input from '../../components/Input';
+import * as supervisorsActions from '../../store/actions/supervisors';
+import ImagePicker from '../../components/ImagePicker';
 
-const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
+const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 const formReducer = (state, action) => {
   if (action.type === FORM_INPUT_UPDATE) {
     const updatedValues = {
@@ -41,22 +41,20 @@ const formReducer = (state, action) => {
 };
 
 const EditProfileScreen = (props) => {
-  const supervisorId = props.navigation.getParam("superId");
-  const editedUser = useSelector((state) =>
-    state.supervisors.supervisors.find(
-      (supervisor) => supervisor.id === supervisorId
-    )
-  );
+  const supervisorId = props.navigation.getParam('profileId');
+  console.log(supervisorId);
+  const editedUser = useSelector((state) => state.supervisors.user);
+
   const [selectedImage, setSelectedImage] = useState(
     editedUser ? editedUser.profilePic : null
   );
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
-      fName: editedUser ? editedUser.firstName : "",
-      lName: editedUser ? editedUser.lastName : "",
-      email: editedUser ? editedUser.email : "",
-      phone: editedUser ? editedUser.phoneNumber : "",
-      jobTitle: editedUser ? editedUser.jobTitle : "",
+      fName: editedUser ? editedUser.fName : '',
+      lName: editedUser ? editedUser.lName : '',
+      email: editedUser ? editedUser.email : '',
+      phone: editedUser ? editedUser.phone : '',
+      jobTitle: editedUser ? editedUser.jobTitle : '',
     },
     inputValidities: {
       fName: editedUser ? true : false,
@@ -72,8 +70,8 @@ const EditProfileScreen = (props) => {
 
   const submitHandler = useCallback(() => {
     if (!formState.formIsValid) {
-      Alert.alert("Wrong input!", "Please check the errors in the form!", [
-        { text: "Okay" },
+      Alert.alert('Wrong input!', 'Please check the errors in the form!', [
+        { text: 'Okay' },
       ]);
       return;
     }
@@ -127,67 +125,67 @@ const EditProfileScreen = (props) => {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={100}
     >
       <ScrollView>
         <View style={styles.form}>
           <Input
-            id="fName"
-            label="First Name"
-            errorText="Please enter a valid first name!"
-            autoCapitalize={"words"}
+            id='fName'
+            label='First Name'
+            errorText='Please enter a valid first name!'
+            autoCapitalize={'words'}
             autoCorrect
-            returnKeyType={"next"}
+            returnKeyType={'next'}
             onInputChange={inputChangeHandler}
-            initialValue={editedUser ? editedUser.firstName : ""}
+            initialValue={editedUser ? editedUser.fName : ''}
             initiallyValid={!!editedUser}
             required
           />
           <Input
-            id="lName"
-            label="Last Name"
-            errorText="Please enter a valid last name!"
-            autoCapitalize={"words"}
+            id='lName'
+            label='Last Name'
+            errorText='Please enter a valid last name!'
+            autoCapitalize={'words'}
             autoCorrect
-            returnKeyType={"next"}
+            returnKeyType={'next'}
             onInputChange={inputChangeHandler}
-            initialValue={editedUser ? editedUser.lastName : ""}
+            initialValue={editedUser ? editedUser.lName : ''}
             initiallyValid={!!editedUser}
             required
           />
           <Input
-            id="email"
-            label="E-mail"
-            errorText="Please enter a valid email address!"
-            keyboardType={"email-address"}
-            autoCapitalize={"none"}
-            returnKeyType={"next"}
+            id='email'
+            label='E-mail'
+            errorText='Please enter a valid email address!'
+            keyboardType={'email-address'}
+            autoCapitalize={'none'}
+            returnKeyType={'next'}
             onInputChange={inputChangeHandler}
-            initialValue={editedUser ? editedUser.email : ""}
+            initialValue={editedUser ? editedUser.email : ''}
             initiallyValid={!!editedUser}
             required
             email
           />
           <Input
-            id="phone"
-            label="Phone"
-            errorText="Please enter a valid phone number!"
-            keyboardType={"phone-pad"}
-            returnKeyType={"next"}
+            id='phone'
+            label='Phone'
+            errorText='Please enter a valid phone number!'
+            keyboardType={'phone-pad'}
+            returnKeyType={'next'}
             onInputChange={inputChangeHandler}
-            initialValue={editedUser ? editedUser.phoneNumber : ""}
+            initialValue={editedUser ? editedUser.phone : ''}
             initiallyValid={!!editedUser}
             required
           />
           <Input
-            id="jobTitle"
-            label="Job Title"
-            errorText="Please enter a valid job!"
-            autoCapitalize={"words"}
+            id='jobTitle'
+            label='Job Title'
+            errorText='Please enter a valid job!'
+            autoCapitalize={'words'}
             autoCorrect
             onInputChange={inputChangeHandler}
-            initialValue={editedUser ? editedUser.jobTitle : ""}
+            initialValue={editedUser ? editedUser.jobTitle : ''}
             initiallyValid={!!editedUser}
             required
           />
@@ -208,14 +206,14 @@ const styles = StyleSheet.create({
 });
 
 EditProfileScreen.navigationOptions = (navData) => {
-  const submitFn = navData.navigation.getParam("submit");
+  const submitFn = navData.navigation.getParam('submit');
   return {
-    headerTitle: "Edit Profile",
+    headerTitle: 'Edit Profile',
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
-          title="Save"
-          iconName="ios-checkmark-circle-outline"
+          title='Save'
+          iconName='ios-checkmark-circle-outline'
           onPress={submitFn}
         />
       </HeaderButtons>

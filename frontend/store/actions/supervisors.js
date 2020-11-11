@@ -1,45 +1,30 @@
-import Supervisor from "../../models/supervisor";
-
-export const CREATE_SUPERVISOR_PROFILE = "CREATE_SUPERVISOR_PROFILE";
-export const UPDATE_SUPERVISOR_PROFILE = "UPDATE_SUPERVISOR_PROFILE";
-export const SET_SUPERVISOR_PROFILE = "SET_SUPERVISOR_PROFILE";
+export const CREATE_SUPERVISOR_PROFILE = 'CREATE_SUPERVISOR_PROFILE';
+export const UPDATE_SUPERVISOR_PROFILE = 'UPDATE_SUPERVISOR_PROFILE';
+export const SET_SUPERVISOR_PROFILE = 'SET_SUPERVISOR_PROFILE';
 
 export const fetchSupervisors = () => {
   return async (dispatch, getState) => {
-    const userId = getState().auth.userId;
-
+    const token = getState().auth.token;
     const response = await fetch(
-      "https://costtracking-app.firebaseio.com/supervisors.json"
+      'http://10.0.2.2:5000/api/users/profiles/myprofile',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      console.log(errorResData.message);
+      throw new Error(errorResData.message);
     }
 
     const resData = await response.json();
 
-    const loadedSupervisors = [];
-    for (const key in resData) {
-      loadedSupervisors.push(
-        new Supervisor(
-          key,
-          resData[key].userId,
-          resData[key].fName,
-          resData[key].lName,
-          resData[key].email,
-          resData[key].phone,
-          resData[key].jobTitle,
-          resData[key].profilePic
-        )
-      );
-    }
-
     dispatch({
       type: SET_SUPERVISOR_PROFILE,
-      supervisors: loadedSupervisors,
-      user:
-        loadedSupervisors.find((supervisor) => supervisor.userId === userId) ||
-        {},
+      userProfile: resData,
     });
   };
 };
@@ -55,39 +40,34 @@ export const createSupervisorProfile = (
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/supervisors.json?auth=${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          fName,
-          lName,
-          email,
-          phone,
-          jobTitle,
-          profilePic,
-        }),
-      }
-    );
-
-    const resData = await response.json();
-
-    dispatch({
-      type: CREATE_SUPERVISOR_PROFILE,
-      profileData: {
-        id: resData.name,
+    const response = await fetch('http://10.0.2.2:5000/api/users/profiles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        userId,
         fName,
         lName,
         email,
         phone,
         jobTitle,
         profilePic,
-        userId,
-      },
+      }),
+    });
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      console.log(errorResData.message);
+      throw new Error(errorResData.message);
+    }
+
+    const resData = await response.json();
+
+    dispatch({
+      type: CREATE_SUPERVISOR_PROFILE,
+      userProfile: resData,
     });
   };
 };
@@ -103,12 +83,13 @@ export const updateSupervisorProfile = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    await fetch(
-      `https://costtracking-app.firebaseio.com/supervisors/${id}.json?auth=${token}`,
+    const response = await fetch(
+      `http://10.0.2.2:5000/api/users/profiles/${id}`,
       {
-        method: "PATCH",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           fName,
@@ -120,10 +101,17 @@ export const updateSupervisorProfile = (
         }),
       }
     );
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      console.log(errorResData.message);
+      throw new Error(errorResData.message);
+    }
+
+    const resData = await response.json();
     dispatch({
       type: UPDATE_SUPERVISOR_PROFILE,
-      id,
-      profileData: { fName, lName, email, phone, jobTitle, profilePic },
+      userProfile: resData,
     });
   };
 };

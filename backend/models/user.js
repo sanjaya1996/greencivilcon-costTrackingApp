@@ -26,6 +26,41 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
+//USER PROFILE SCHEMA
+
+const userProfileSchema = mongoose.Schema({
+  fName: {
+    type: String,
+    required: true,
+  },
+  lName: {
+    type: String,
+    required: true,
+  },
+  jobTitle: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  profilePic: {
+    type: String,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
+});
+
 const User = mongoose.model('User', userSchema);
 
-export default User;
+const UserProfile = mongoose.model('UserProfile', userProfileSchema);
+
+export { User, UserProfile };
