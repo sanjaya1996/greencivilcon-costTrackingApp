@@ -13,6 +13,7 @@ import materialRoutes from './routes/materialRoutes.js';
 import miscellanyRoutes from './routes/miscellanyRoutes.js';
 import clientRoutes from './routes/clientRoutes.js';
 import managerRoutes from './routes/managerRoutes.js';
+import userNoteRoutes from './routes/userNoteRoutes.js';
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use('/api/materials', materialRoutes);
 app.use('/api/miscellanies', miscellanyRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/managers', managerRoutes);
+app.use('/api/usersnotes', userNoteRoutes);
 
 app.use(notFound);
 

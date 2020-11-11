@@ -1,19 +1,27 @@
-import UserNote from "../../models/userNote";
+import UserNote from '../../models/userNote';
 
-export const CREATE_NOTE = "CREATE_NOT";
-export const UPDATE_NOTE = "UPDATE_NOTE";
-export const DELETE_NOTE = "DELETE_NOTE";
-export const SET_NOTES = "SET_NOTES";
+export const CREATE_NOTE = 'CREATE_NOT';
+export const UPDATE_NOTE = 'UPDATE_NOTE';
+export const DELETE_NOTE = 'DELETE_NOTE';
+export const SET_NOTES = 'SET_NOTES';
 
 export const fetchUserNotes = () => {
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
+    const token = getState().auth.token;
     const response = await fetch(
-      "https://costtracking-app.firebaseio.com/userNotes.json"
+      'http://10.0.2.2:5000/api/usersnotes/mynotes',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      console.log(errorResData.message);
+      throw new Error(errorResData.message);
     }
 
     const resData = await response.json();
@@ -22,20 +30,19 @@ export const fetchUserNotes = () => {
     for (const key in resData) {
       loadedUsersNotes.push(
         new UserNote(
-          key,
+          resData[key]._id,
           resData[key].title,
           resData[key].description,
           resData[key].images,
           resData[key].pickedDateTime,
           resData[key].notificationId,
-          resData[key].userId
+          resData[key].user
         )
       );
     }
     dispatch({
       type: SET_NOTES,
-      userNotes:
-        loadedUsersNotes.filter((note) => note.userId === userId) || [],
+      userNotes: loadedUsersNotes,
     });
   };
 };
@@ -47,30 +54,31 @@ export const createNote = (
   pickedDateTime,
   notificationId
 ) => {
+  console.log(images);
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
     const token = getState().auth.token;
 
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/userNotes.json?auth=${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          images,
-          pickedDateTime,
-          notificationId,
-          userId,
-        }),
-      }
-    );
+    const response = await fetch('http://10.0.2.2:5000/api/usersnotes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        images,
+        pickedDateTime,
+        notificationId,
+        userId,
+      }),
+    });
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      console.log(errorResData.message);
+      throw new Error(errorResData.message);
     }
 
     const resData = await response.json();
@@ -78,13 +86,13 @@ export const createNote = (
     dispatch({
       type: CREATE_NOTE,
       noteData: {
-        id: resData.name,
-        title,
-        description,
-        images,
-        pickedDateTime,
-        notificationId,
-        userId,
+        id: resData._id,
+        title: resData.title,
+        description: resData.description,
+        images: resData.images,
+        pickedDateTime: resData.pickedDateTime,
+        notificationId: resData.notificationId,
+        userId: resData.user,
       },
     });
   };
@@ -100,31 +108,40 @@ export const updateNote = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/userNotes/${id}.json?auth=${token}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          images,
-          pickedDateTime,
-          notificationId,
-        }),
-      }
-    );
+    const response = await fetch(`http://10.0.2.2:5000/api/usersnotes/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        images,
+        pickedDateTime,
+        notificationId,
+      }),
+    });
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      console.log(errorResData.message);
+      throw new Error(errorResData.message);
     }
+
+    const resData = await response.json();
 
     dispatch({
       type: UPDATE_NOTE,
       id,
-      noteData: { title, description, images, pickedDateTime, notificationId },
+      noteData: {
+        id: resData._id,
+        title: resData.title,
+        description: resData.description,
+        images: resData.images,
+        pickedDateTime: resData.pickedDateTime,
+        notificationId: resData.notificationId,
+      },
     });
   };
 };
@@ -132,15 +149,17 @@ export const updateNote = (
 export const deleteNote = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `https://costtracking-app.firebaseio.com/userNotes/${id}.json?auth=${token}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await fetch(`http://10.0.2.2:5000/api/usersnotes/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
-      throw new Error("Something went wrong!");
+      const errorResData = await response.json();
+      console.log(errorResData.message);
+      throw new Error(errorResData.message);
     }
 
     dispatch({ type: DELETE_NOTE, id });
