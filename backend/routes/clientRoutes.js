@@ -5,7 +5,7 @@ import {
   getClients,
   getMyClients,
   updateClient,
-} from '../controllers/ClientController.js';
+} from '../controllers/clientController.js';
 
 import checkAuth from '../middleware/authMiddleware.js';
 

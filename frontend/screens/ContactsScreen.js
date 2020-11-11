@@ -146,7 +146,7 @@ const ContactsScreen = (props) => {
       setError(null);
       setIsDeleting(true);
       try {
-        await dispatch(managersActions.deletManager(id));
+        await dispatch(managersActions.deleteManager(id));
       } catch (err) {
         setError(err.message);
       }
