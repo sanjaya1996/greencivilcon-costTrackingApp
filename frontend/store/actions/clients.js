@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 import Client from '../../models/client';
 
 export const CREATE_CLIENT = 'CREATE_CLIENT';
@@ -9,14 +12,11 @@ export const fetchClients = () => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
     try {
-      const response = await fetch(
-        'http://10.0.2.2:5000/api/clients/myclients',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/clients/myclients`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         const errorResData = await response.json();
@@ -52,7 +52,7 @@ export const fetchClients = () => {
 export const createClient = (projectId, fName, lName, email, phone) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch('http://10.0.2.2:5000/api/clients', {
+    const response = await fetch(`${apiUrl}/api/clients`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ export const createClient = (projectId, fName, lName, email, phone) => {
 export const updateClient = (id, fName, lName, email, phone) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/clients/${id}`, {
+    const response = await fetch(`${apiUrl}/api/clients/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export const updateClient = (id, fName, lName, email, phone) => {
 export const deleteClient = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/clients/${id}`, {
+    const response = await fetch(`${apiUrl}/api/clients/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,

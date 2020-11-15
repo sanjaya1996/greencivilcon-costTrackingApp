@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 import Project from '../../models/project';
 
 export const CREATE_PROJECT = ' CREATE_PROJECT';
@@ -11,7 +14,7 @@ export const fetchProjects = () => {
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/projects');
+      const response = await fetch(`${apiUrl}/api/projects`);
 
       if (!response.ok) {
         const errorResData = await response.json();
@@ -53,14 +56,11 @@ export const fetchProjects = () => {
 export const fetchHistoryProjects = () => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      'http://10.0.2.2:5000/api/projects/history/my',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/projects/history/my`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();
@@ -86,7 +86,7 @@ export const createProject = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch('http://10.0.2.2:5000/api/projects', {
+    const response = await fetch(`${apiUrl}/api/projects`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export const updateProject = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/projects/${id}`, {
+    const response = await fetch(`${apiUrl}/api/projects/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export const updateProject = (
 export const finishProject = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response1 = await fetch(`http://10.0.2.2:5000/api/projects/${id}`, {
+    const response1 = await fetch(`${apiUrl}/api/projects/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -187,15 +187,12 @@ export const deleteHistoryProject = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
 
-    const response = await fetch(
-      `http://10.0.2.2:5000/api/projects/history/${id}`,
-      {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/projects/history/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();

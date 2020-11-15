@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 import MiniPhase from '../../models/miniPhase';
 
 export const TOGGLE_SPECIAL = 'TOGGLE-SPECIAL';
@@ -10,7 +13,7 @@ export const SET_SPECIALMPHASES = 'SET_SPECIALMPHASES';
 export const fetchMiniPhases = () => {
   return async (dispatch) => {
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/miniphases');
+      const response = await fetch(`${apiUrl}/api/miniphases`);
 
       if (!response.ok) {
         const errorResData = await response.json();
@@ -39,9 +42,7 @@ export const fetchMiniPhases = () => {
 
 export const fetchSpecialMphases = () => {
   return async (dispatch) => {
-    const response = await fetch(
-      'http://10.0.2.2:5000/api/miniphases/specials'
-    );
+    const response = await fetch(`${apiUrl}/api/miniphases/specials`);
 
     if (!response.ok) {
       const errorResData = await response.json();
@@ -74,7 +75,7 @@ export const toggleSpecial = (miniPhaseId) => {
     const token = getState().auth.token;
 
     const response = await fetch(
-      `http://10.0.2.2:5000/api/miniphases/specials/${miniPhaseId}`,
+      `${apiUrl}/api/miniphases/specials/${miniPhaseId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,15 +99,12 @@ export const toggleSpecial = (miniPhaseId) => {
 export const deleteMiniPhase = (miniPhaseId) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `http://10.0.2.2:5000/api/miniphases/${miniPhaseId}`,
-      {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/miniphases/${miniPhaseId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();
@@ -124,7 +122,7 @@ export const deleteMiniPhase = (miniPhaseId) => {
 export const createMiniPhase = (phaseId, title, status, description) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch('http://10.0.2.2:5000/api/miniphases', {
+    const response = await fetch(`${apiUrl}/api/miniphases`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -161,7 +159,7 @@ export const createMiniPhase = (phaseId, title, status, description) => {
 export const updateMiniPhase = (id, title, status, description) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/miniphases/${id}`, {
+    const response = await fetch(`${apiUrl}/api/miniphases/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

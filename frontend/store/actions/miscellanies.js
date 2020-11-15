@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 import MiniPhaseMiscellaneous from '../../models/miniPhaseMiscellaneous';
 
 export const DELETE_MPHASE_MISCELLANY = 'DELETE_MPHASE_MISCELLANY';
@@ -9,7 +12,7 @@ export const DELETE_MISCELLANY_ONDLTMPHASE = 'DELETE_MISCELLANY_ONDLTMPHASE';
 export const fetchMiscellanies = () => {
   return async (dispatch) => {
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/miscellanies');
+      const response = await fetch(`${apiUrl}/api/miscellanies`);
 
       if (!response.ok) {
         const errorResData = await response.json();
@@ -41,15 +44,12 @@ export const fetchMiscellanies = () => {
 export const deleteMphaseMiscellany = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `http://10.0.2.2:5000/api/miscellanies/${id}`,
-      {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/miscellanies/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();
@@ -69,7 +69,7 @@ export const createMphaseMiscellany = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch('http://10.0.2.2:5000/api/miscellanies', {
+    const response = await fetch(`${apiUrl}/api/miscellanies`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,21 +108,18 @@ export const createMphaseMiscellany = (
 export const updateMphaseMiscellany = (id, title, description, totalCost) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `http://10.0.2.2:5000/api/miscellanies/${id}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          totalCost,
-        }),
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/miscellanies/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        totalCost,
+      }),
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();

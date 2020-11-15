@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 import MiniPhaseMaterial from '../../models/miniPhaseMaterial';
 
 export const DELETE_MPHASE_MATERIAL = 'DELETE_MPHASE_MATERIAL';
@@ -10,7 +13,7 @@ export const fetchMaterials = () => {
   return async (dispatch) => {
     //any async code you want!
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/materials');
+      const response = await fetch(`${apiUrl}/api/materials`);
 
       if (!response.ok) {
         const errorResData = await response.json();
@@ -43,7 +46,7 @@ export const fetchMaterials = () => {
 export const deleteMphaseMaterial = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/materials/${id}`, {
+    const response = await fetch(`${apiUrl}/api/materials/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -71,7 +74,7 @@ export const createMphaseMaterial = (
   return async (dispatch, getState) => {
     const token = getState().auth.token;
     //any async code you want!
-    const response = await fetch('http://10.0.2.2:5000/api/materials', {
+    const response = await fetch(`${apiUrl}/api/materials`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -121,7 +124,7 @@ export const updateMphaseMaterial = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/materials/${id}`, {
+    const response = await fetch(`${apiUrl}/api/materials/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

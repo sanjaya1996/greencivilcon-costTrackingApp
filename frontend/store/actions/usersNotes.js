@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 import UserNote from '../../models/userNote';
 
 export const CREATE_NOTE = 'CREATE_NOT';
@@ -9,14 +12,11 @@ export const fetchUserNotes = () => {
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
     const token = getState().auth.token;
-    const response = await fetch(
-      'http://10.0.2.2:5000/api/usersnotes/mynotes',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/usersnotes/mynotes`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();
@@ -59,7 +59,7 @@ export const createNote = (
     const userId = getState().auth.userId;
     const token = getState().auth.token;
 
-    const response = await fetch('http://10.0.2.2:5000/api/usersnotes', {
+    const response = await fetch(`${apiUrl}/api/usersnotes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ export const updateNote = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/usersnotes/${id}`, {
+    const response = await fetch(`${apiUrl}/api/usersnotes/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -149,7 +149,7 @@ export const updateNote = (
 export const deleteNote = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/usersnotes/${id}`, {
+    const response = await fetch(`${apiUrl}/api/usersnotes/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,

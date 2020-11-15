@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 export const CREATE_SUPERVISOR_PROFILE = 'CREATE_SUPERVISOR_PROFILE';
 export const UPDATE_SUPERVISOR_PROFILE = 'UPDATE_SUPERVISOR_PROFILE';
 export const SET_SUPERVISOR_PROFILE = 'SET_SUPERVISOR_PROFILE';
@@ -5,14 +8,11 @@ export const SET_SUPERVISOR_PROFILE = 'SET_SUPERVISOR_PROFILE';
 export const fetchSupervisors = () => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      'http://10.0.2.2:5000/api/users/profiles/myprofile',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/users/profiles/myprofile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();
@@ -40,7 +40,7 @@ export const createSupervisorProfile = (
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;
     const token = getState().auth.token;
-    const response = await fetch('http://10.0.2.2:5000/api/users/profiles', {
+    const response = await fetch(`${apiUrl}/api/users/profiles`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -83,24 +83,21 @@ export const updateSupervisorProfile = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `http://10.0.2.2:5000/api/users/profiles/${id}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          fName,
-          lName,
-          email,
-          phone,
-          jobTitle,
-          profilePic,
-        }),
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/users/profiles/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        fName,
+        lName,
+        email,
+        phone,
+        jobTitle,
+        profilePic,
+      }),
+    });
 
     if (!response.ok) {
       const errorResData = await response.json();

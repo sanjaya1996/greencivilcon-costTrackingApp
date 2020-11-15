@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 import MiniPhaseLabor from '../../models/miniPhaseLabor';
 
 export const DELETE_MPHASE_LABOR = 'DELETE_MPHASE_LABOR';
@@ -10,7 +13,7 @@ export const fetchLabors = () => {
   return async (dispatch) => {
     // any async code you want
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/labors');
+      const response = await fetch(`${apiUrl}/api/labors`);
 
       if (!response.ok) {
         const errorResData = await response.json();
@@ -52,7 +55,7 @@ export const fetchLabors = () => {
 export const deleteMphaseLabor = (id) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(`http://10.0.2.2:5000/api/labors/${id}`, {
+    const response = await fetch(`${apiUrl}/api/labors/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -86,7 +89,7 @@ export const createMphaseLabor = (
     const supervisorId = getState().auth.userId;
     const token = getState().auth.token;
     // any async code you want
-    const response = await fetch('http://10.0.2.2:5000/api/labors', {
+    const response = await fetch(`${apiUrl}/api/labors`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -154,7 +157,7 @@ export const updateMphaseLabor = (
   return async (dispatch, getState) => {
     const token = getState().auth.token;
 
-    const response = await fetch(`http://10.0.2.2:5000/api/labors/${id}`, {
+    const response = await fetch(`${apiUrl}/api/labors/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

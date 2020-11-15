@@ -1,0 +1,27 @@
+{
+  "name": "cost-trackingapp",
+  "version": "1.0.0",
+  "description": "MERN cost tracking app GcivilCon",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server",
+    "server": "nodemon server",
+    "data:import": "node seeder",
+    "data:destroy": "node seeder -d"
+  },
+  "author": "Sanjay Dahal",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.12"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}

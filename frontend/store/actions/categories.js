@@ -1,3 +1,6 @@
+import getEnvVars from '../../environment';
+const { apiUrl } = getEnvVars();
+
 import Category from '../../models/category';
 
 export const CREATE_PROJECTPHASE = 'CREATE_PROJECTPHASE';
@@ -7,7 +10,7 @@ export const SET_PROJECTPHASES = 'SET_PROJECTPHASES';
 export const fetchProjectPhases = () => {
   return async (dispatch) => {
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/projectphases');
+      const response = await fetch(`${apiUrl}/api/projectphases`);
 
       if (!response.ok) {
         const errorResData = await response.json();
@@ -45,7 +48,7 @@ export const createProjectPhase = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch('http://10.0.2.2:5000/api/projectphases', {
+    const response = await fetch(`${apiUrl}/api/projectphases`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -89,21 +92,18 @@ export const updateProjectPhase = (
 ) => {
   return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response = await fetch(
-      `http://10.0.2.2:5000/api/projectphases/${phaseId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          startedDate,
-          estimatedDate,
-          estimatedBudget,
-        }),
-      }
-    );
+    const response = await fetch(`${apiUrl}/api/projectphases/${phaseId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        startedDate,
+        estimatedDate,
+        estimatedBudget,
+      }),
+    });
 
     const resData = await response.json();
 
